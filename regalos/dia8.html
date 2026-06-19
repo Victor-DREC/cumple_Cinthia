@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Día 8: El Cuento Más Bonito del Mundo 📖</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #FFF5F6 0%, #FCE4E6 100%);
+            --wine-main: #6B2D5C;
+            --rose-gold: #B76E79;
+            --champagne: #F7E7CE;
+            --white-card: rgba(255, 255, 255, 0.85);
+            --text-dark: #4A2834;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            padding: 2.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .magic-glow-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 30%, rgba(247, 231, 206, 0.35) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        header, .story-container, .back-btn-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .day-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--rose-gold);
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            color: var(--wine-main);
+            line-height: 1.2;
+        }
+
+        /* --- CONTENEDOR DEL LIBRO DE CUENTOS --- */
+        .story-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--white-card);
+            border: 1px solid rgba(183, 110, 121, 0.3);
+            border-radius: 28px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 12px 40px rgba(107, 45, 92, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            position: relative;
+        }
+
+        /* Decoración de esquina clásica de libro */
+        .story-container::before {
+            content: "✨";
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.2rem;
+            opacity: 0.5;
+        }
+
+        /* --- ESTILOS DEL TEXTO DEL CUENTO --- */
+        .story-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-dark);
+            text-align: justify;
+        }
+
+        /* Letra capitular para el inicio del cuento */
+        .story-text p::first-letter {
+            font-family: 'Cinzel', serif;
+            font-size: 3.2rem;
+            float: left;
+            line-height: 1;
+            padding-right: 8px;
+            padding-top: 4px;
+            color: var(--wine-main);
+            font-weight: 700;
+        }
+
+        .story-paragraph {
+            margin-bottom: 1.5rem;
+        }
+
+        .story-closing {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--rose-gold);
+            text-align: center;
+            margin-top: 2.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .back-btn-container {
+            margin-top: 2.5rem;
+            text-align: center;
+        }
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--wine-main);
+            border: 1px solid var(--wine-main);
+            padding: 10px 22px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: var(--wine-main);
+            color: var(--champagne);
+            box-shadow: 0 4px 15px rgba(107, 45, 92, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+    <div class="magic-glow-overlay"></div>
+
+    <header>
+        <p class="day-title">SORPRESA DEL DÍA 8</p>
+        <h1 class="main-title">Escrito en las Estrellas</h1>
+    </header>
+
+    <main class="story-container">
+        <article class="story-text">
+            <!-- NOTA: He puesto "Ella" como base del texto, puedes cambiarlo por su nombre real si gustas -->
+            <p class="story-paragraph">Había una vez, en un universo lleno de ruidos y afanes, una princesa con una sonrisa capaz de detener el tiempo y calmar las tormentas más feroces del corazón. Su vida caminaba tranquila, iluminando a quienes la rodeaban, sin saber que el destino ya tejía hilos invisibles para cruzar su camino con el de alguien que cambiaría su mundo para siempre.</p>
+            
+            <p class="story-paragraph">Un día cualquiera, la magia del universo hizo de las suyas y la puso frente a sus ojos. No hubo rayos ni fuegos artificiales exagerados, sino algo mucho más profundo: una complicidad instantánea, un refugio tibio donde el alma finalmente se sentía a salvo. Él descubrió que en sus abrazos apretados la distancia dejaba de doler, y que cada pequeña manía de ella era una obra de arte diseñada a la perfección.</p>
+            
+            <p class="story-paragraph">A pesar de los kilómetros o de las pruebas del tiempo, cada capítulo que escribían juntos demostraba que no importaba cuán lejos parecieran estar sus cuerpos; sus pensamientos compartían el mismo espacio. Él se convirtió en su guardián, y ella en su brújula y su reina absoluta.</p>
+
+            <p class="story-paragraph">Hoy, el calendario marca un día sagrado, el día en que el mundo se hizo más hermoso con su llegada. Y mientras ella lee estas líneas, él la mira a la distancia, sonriendo con el corazón lleno de certeza, sabiendo que este cuento apenas está empezando y que su final feliz se construye con cada te amo de todos los días.</p>
+            
+            <div class="story-closing">Y este amor... Continuará ❤️</div>
+        </article>
+    </main>
+
+    <div class="back-btn-container">
+        <a href="../index.html" class="back-btn">Volver al Calendario 🗓️</a>
+    </div>
+
+    <script>
+        // --- 🌟 MOTOR DE PALABRAS FLOTANTES PERSONALIZADAS CONSERVADO ---
+        function initBgParticles() {
+            const canvasBg = document.getElementById('bgCanvas');
+            const ctxBg = canvasBg.getContext('2d');
+            let particlesArray = [];
+            
+            function resizeCanvas() {
+                canvasBg.width = window.innerWidth;
+                canvasBg.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const loveWords = [
+                "Feliz Cumpleaños", 
+                "Mi reina", 
+                "Mi princesa", 
+                "Mi bebita", 
+                "Mi mundo", 
+                "Mi esposita", 
+                "#27", 
+                "❤️", 
+                "💕"
+            ];
+            
+            const colors = ['#B76E79', '#6B2D5C', '#FFD1DC', '#4A2834'];
+
+            class LoveWordParticle {
+                constructor() {
+                    this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                    this.x = Math.random() * canvasBg.width;
+                    this.y = canvasBg.height + (Math.random() * 100);
+                    
+                    this.fontSize = this.text.includes('#') || this.text.length < 3 
+                        ? Math.random() * 12 + 16  
+                        : Math.random() * 6 + 13;  
+                    
+                    this.speedX = Math.random() * 0.4 - 0.2; 
+                    this.speedY = Math.random() * -0.6 - 0.2; 
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.4 + 0.3; 
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    if (this.y < -30) {
+                        this.y = canvasBg.height + 20;
+                        this.x = Math.random() * canvasBg.width;
+                        this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                        this.alpha = Math.random() * 0.4 + 0.3;
+                    }
+                }
+                
+                draw() {
+                    ctxBg.save();
+                    ctxBg.globalAlpha = this.alpha;
+                    ctxBg.fillStyle = this.color;
+                    ctxBg.font = `600 ${this.fontSize}px 'Montserrat', sans-serif`;
+                    ctxBg.textAlign = 'center';
+                    ctxBg.fillText(this.text, this.x, this.y);
+                    ctxBg.restore();
+                }
+            }
+
+            function createParticles() {
+                const numberOfParticles = 20; 
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new LoveWordParticle());
+                    particlesArray[i].y = Math.random() * canvasBg.height;
+                }
+            }
+
+            function animate() {
+                ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+                particlesArray.forEach(p => { 
+                    p.update(); 
+                    p.draw(); 
+                });
+                requestAnimationFrame(animate);
+            }
+
+            createParticles();
+            animate();
+        }
+
+        initBgParticles();
+    </script>
+</body>
+</html>

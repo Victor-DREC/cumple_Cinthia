@@ -11,7 +11,7 @@ const giftsData = {
     7: { riddle: "¿Cómo se llama el lugar donde fue nuestro primer beso?", answer: "parque central", phrase: "«Ese instante detuvo el tiempo para mí.»", url: "regalos/dia7.html" },
     8: { riddle: "¿Cómo se llama el lugar donde fue nuestro primer beso?", answer: "parque central", phrase: "«Ese instante detuvo el tiempo para mí.»", url: "regalos/dia8.html" },
     9: { riddle: "¿Cómo se llama el lugar donde fue nuestro primer beso?", answer: "parqurlDestinoe central", phrase: "«Ese instante detuvo el tiempo para mí.»", url: "regalos/dia9.html" },
-    10: { riddle: "¿Cómo se llama el lugar donde fue nuestro primer beso?", answer: "parque central", phrase: "«Ese instante detuvo el tiempo para mí.»", url: "regalos/dia2.html" },
+    10: { riddle: "¿Cómo se llama el lugar donde fue nuestro primer beso?", answer: "parque central", phrase: "«Ese instante detuvo el tiempo para mí.»", url: "regalos/dia10.html" },
     11: { riddle: "¿Cómo se llama el lugar donde fue nuestro primer beso?", answer: "parque central", phrase: "«Ese instante detuvo el tiempo para mí.»", url: "regalos/dia2.html" },
     12: { riddle: "¿Cómo se llama el lugar donde fue nuestro primer beso?", answer: "parque central", phrase: "«Ese instante detuvo el tiempo para mí.»", url: "regalos/dia2.html" },
     13: { riddle: "¿Cómo se llama el lugar donde fue nuestro primer beso?", answer: "parque central", phrase: "«Ese instante detuvo el tiempo para mí.»", url: "regalos/dia2.html" },
