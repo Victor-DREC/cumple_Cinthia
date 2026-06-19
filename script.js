@@ -100,74 +100,99 @@ document.getElementById('closeModal').onclick = () => modal.classList.remove('ac
 
 
 // --- 🌟 MOTOR DE EFECTOS ESPECIALES DINÁMICOS (PARTÍCULAS) 🌟 ---
-function initBgParticles() {
-    const canvas = document.getElementById('bgCanvas');
-    const ctx = canvas.getContext('2d');
-    let particlesArray = [];
-    
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    // Colores mágicos para las partículas flotantes
-    const colors = ['#B76E79', '#D4AF37', '#6B2D5C', '#FFD1DC', '#FFFFFF'];
-
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 3 + 1;
-            this.speedX = Math.random() * 0.4 - 0.2;
-            this.speedY = Math.random() * -0.5 - 0.1; // Flotan hacia arriba lentamente
-            this.color = colors[Math.floor(Math.random() * colors.length)];
-            this.alpha = Math.random() * 0.5 + 0.2;
-            this.fadeSpeed = Math.random() * 0.005 + 0.002;
-        }
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
+// --- 🌟 NUEVO MOTOR DE PALABRAS FLOTANTES PERSONALIZADAS ---
+        function initBgParticles() {
+            const canvasBg = document.getElementById('bgCanvas');
+            const ctxBg = canvasBg.getContext('2d');
+            let particlesArray = [];
             
-            // Si desaparece por arriba o se desvanece por completo, reaparece abajo
-            if (this.y < 0 || this.alpha <= 0) {
-                this.y = canvas.height;
-                this.x = Math.random() * canvas.width;
-                this.alpha = Math.random() * 0.5 + 0.2;
+            function resizeCanvas() {
+                canvasBg.width = window.innerWidth;
+                canvasBg.height = window.innerHeight;
             }
-        }
-        draw() {
-            ctx.save();
-            ctx.globalAlpha = this.alpha;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fillStyle = this.color;
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = this.color;
-            ctx.fill();
-            ctx.restore();
-        }
-    }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
 
-    function createParticles() {
-        const numberOfParticles = 50; // Cantidad óptima para rendimiento móvil
-        for (let i = 0; i < numberOfParticles; i++) {
-            particlesArray.push(new Particle());
-        }
-    }
+            // Lista de palabras y detalles personalizados que flotarán en el fondo
+            const loveWords = [
+                "Feliz Cumpleaños", 
+                "Mi reina", 
+                "Mi princesa", 
+                "Mi bebita", 
+                "Mi mundo", 
+                "Mi esposita", 
+                "#27", 
+                "❤️", 
+                "💕"
+            ];
+            
+            const colors = ['#B76E79', '#6B2D5C', '#FFD1DC', '#4A2834'];
 
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let i = 0; i < particlesArray.length; i++) {
-            particlesArray[i].update();
-            particlesArray[i].draw();
-        }
-        requestAnimationFrame(animate);
-    }
+            class LoveWordParticle {
+                constructor() {
+                    this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                    this.x = Math.random() * canvasBg.width;
+                    this.y = canvasBg.height + (Math.random() * 100); // Aparecen desde abajo
+                    
+                    // Tamaño adaptado: los emojis/números son un poco más grandes, las frases más sutiles
+                    this.fontSize = this.text.includes('#') || this.text.length < 3 
+                        ? Math.random() * 12 + 16  // Entre 16px y 28px
+                        : Math.random() * 6 + 13;  // Entre 13px y 19px
+                    
+                    this.speedX = Math.random() * 0.4 - 0.2; // Ligero bamboleo lateral
+                    this.speedY = Math.random() * -0.6 - 0.2; // Velocidad de subida suave
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.4 + 0.3; // Opacidad translúcida para no molestar la lectura
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    // Si la palabra sale por la parte superior de la pantalla, se reinicia abajo
+                    if (this.y < -30) {
+                        this.y = canvasBg.height + 20;
+                        this.x = Math.random() * canvasBg.width;
+                        this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                        this.alpha = Math.random() * 0.4 + 0.3;
+                    }
+                }
+                
+                draw() {
+                    ctxBg.save();
+                    ctxBg.globalAlpha = this.alpha;
+                    ctxBg.fillStyle = this.color;
+                    // Mezclamos Montserrat con un estilo bold para que se lea hermoso
+                    ctxBg.font = `600 ${this.fontSize}px 'Montserrat', sans-serif`;
+                    ctxBg.textAlign = 'center';
+                    ctxBg.fillText(this.text, this.x, this.y);
+                    ctxBg.restore();
+                }
+            }
 
-    createParticles();
-    animate();
-}
+            // Creamos una cantidad equilibrada para que se vea elegante y fluida en móviles
+            function createParticles() {
+                const numberOfParticles = 20; 
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new LoveWordParticle());
+                    // Escalamos la posición inicial vertical para que no salgan todas al mismo tiempo al arrancar
+                    particlesArray[i].y = Math.random() * canvasBg.height;
+                }
+            }
+
+            function animate() {
+                ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+                particlesArray.forEach(p => { 
+                    p.update(); 
+                    p.draw(); 
+                });
+                requestAnimationFrame(animate);
+            }
+
+            createParticles();
+            animate();
+        }
+
+        initBgParticles();
 
 init();
