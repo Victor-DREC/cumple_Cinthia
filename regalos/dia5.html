@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Día 5: 20 Razones para Admirarte ❤️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #FFF5F6 0%, #FCE4E6 100%);
+            --wine-main: #6B2D5C;
+            --rose-gold: #B76E79;
+            --champagne: #F7E7CE;
+            --white-card: rgba(255, 255, 255, 0.82);
+            --text-dark: #4A2834;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            padding: 3rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* --- 🌟 MOTOR DE EFECTOS ESPECIALES DEL FONDO --- */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .magic-glow-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 30%, rgba(247, 231, 206, 0.35) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        header, .main-container, .back-btn-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .day-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--rose-gold);
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.1rem;
+            color: var(--wine-main);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            margin-top: 0.6rem;
+            font-size: 0.95rem;
+            max-width: 420px;
+            line-height: 1.5;
+            opacity: 0.85;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* --- 📋 CONTENEDOR DE LA LISTA DE ADMIRACIÓN --- */
+        .main-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* TARJETAS INDIVIDUALES DE REVELADO */
+        .reason-card {
+            background: var(--white-card);
+            border: 1px solid rgba(183, 110, 121, 0.2);
+            border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 15px rgba(183, 110, 121, 0.06);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Clase activa controlada por el IntersectionObserver en JS */
+        .reason-card.reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reason-card:hover {
+            transform: scale(1.02);
+            border-color: var(--rose-gold);
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 8px 25px rgba(107, 45, 92, 0.12);
+        }
+
+        .reason-number {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--rose-gold);
+            min-width: 40px;
+            height: 40px;
+            background: rgba(183, 110, 121, 0.12);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(183, 110, 121, 0.25);
+        }
+
+        .reason-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-dark);
+            font-weight: 400;
+        }
+
+        .back-btn-container {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--wine-main);
+            border: 1px solid var(--wine-main);
+            padding: 10px 22px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: var(--wine-main);
+            color: var(--champagne);
+            box-shadow: 0 4px 15px rgba(107, 45, 92, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="magic-glow-overlay"></div>
+
+    <header>
+        <p class="day-title">SORPRESA DEL DÍA 5</p>
+        <h1 class="main-title">Lo Que Admiro de Ti</h1>
+        <p class="subtitle">Elegir solo veinte cosas es poco para todo lo que eres, pero aquí hay un pedacito de lo que me enamora de ti cada día. 💖</p>
+    </header>
+
+    <main class="main-container">
+        
+        <div class="reason-card">
+            <div class="reason-number">01</div>
+            <p class="reason-text">Tu hermosa resiliencia para afrontar cualquier obstáculo con una sonrisa.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">02</div>
+            <p class="reason-text">La dulzura infinita que transmites en cada una de tus palabras.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">03</div>
+            <p class="reason-text">Tu inteligencia y la brillante forma en la que ves el mundo.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">04</div>
+            <p class="reason-text">La pasión y dedicación que pones en cada una de tus metas.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">05</div>
+            <p class="reason-text">Tu mirada, que es capaz de darme paz incluso en la distancia.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">06</div>
+            <p class="reason-text">La empatía natural que tienes para escuchar y apoyar a los demás.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">07</div>
+            <p class="reason-text">Tu risa espontánea, mi sonido favorito en todo el universo.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">08</div>
+            <p class="reason-text">La paciencia y el tierno amor con el que me cuidas día con día.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">09</div>
+            <p class="reason-text">Tu madurez para conversar y resolver juntos cualquier situación.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">10</div>
+            <p class="reason-text">La calidez de tu corazón, que me hace sentir en casa sin importar los kilómetros.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">11</div>
+            <p class="reason-text">Tu originalidad; no existe nadie en el mundo con tu magia única.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">12</div>
+            <p class="reason-text">La forma tan linda en la que te emocionas por los pequeños detalles.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">13</div>
+            <p class="reason-text">Tu nobleza y la pureza de tus intenciones con las personas que amas.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">14</div>
+            <p class="reason-text">Tu valentía para defender tus ideales y lo que crees correcto.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">15</div>
+            <p class="reason-text">La increíble fortaleza que posees, inspirándome a ser mejor persona.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">16</div>
+            <p class="reason-text">Tu sentido del humor, capaz de transformar cualquier día gris.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">17</div>
+            <p class="reason-text">La honestidad y la confianza plena que me inspiras en cada instante.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">18</div>
+            <p class="reason-text">Tu generosidad desinteresada con quienes te rodean.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">19</div>
+            <p class="reason-text">La manera perfecta en la que encajas en mis planes y en mi futuro.</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">20</div>
+            <p class="reason-text">Simplemente tu existencia, porque complementas mi vida por completo.</p>
+        </div>
+
+    </main>
+
+    <div class="back-btn-container">
+        <a href="../index.html" class="back-btn">Volver al Calendario 🗓️</a>
+    </div>
+
+    <script>
+        // --- 👁️ EFECTO INTERACTIVO DE REVELADO (SCROLL ANIMATION) ---
+        function initScrollReveal() {
+            const cards = document.querySelectorAll('.reason-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('reveal');
+                    }
+                });
+            }, {
+                threshold: 0.15 // Se activa cuando el 15% de la tarjeta es visible
+            });
+
+            cards.forEach(card => observer.observe(card));
+        }
+
+        // --- 🌟 MOTOR DE EFECTOS ESPECIALES DINÁMICOS MANTENIDO ---
+        function initBgParticles() {
+            const canvas = document.getElementById('bgCanvas');
+            const ctx = canvas.getContext('2d');
+            let particlesArray = [];
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const colors = ['#B76E79', '#D4AF37', '#6B2D5C', '#FFD1DC', '#FFFFFF'];
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2.5 + 1;
+                    this.speedX = Math.random() * 0.4 - 0.2;
+                    this.speedY = Math.random() * -0.4 - 0.1;
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.5 + 0.2;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    if (this.y < 0 || this.alpha <= 0) {
+                        this.y = canvas.height;
+                        this.x = Math.random() * canvas.width;
+                        this.alpha = Math.random() * 0.5 + 0.2;
+                    }
+                }
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.alpha;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+
+            function createParticles() {
+                const numberOfParticles = 35;
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new Particle());
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particlesArray.length; i++) {
+                    particlesArray[i].update();
+                    particlesArray[i].draw();
+                }
+                requestAnimationFrame(animate);
+            }
+
+            createParticles();
+            animate();
+        }
+
+        // Ejecutar funciones al cargar la página
+        initScrollReveal();
+        initBgParticles();
+    </script>
+</body>
+</html>
