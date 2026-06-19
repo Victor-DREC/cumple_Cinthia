@@ -1,0 +1,247 @@
+:root {
+    --bg-gradient: linear-gradient(135deg, #FFF5F6 0%, #FCE4E6 100%);
+    --wine-main: #6B2D5C;
+    --rose-gold: #B76E79;
+    --champagne: #F7E7CE;
+    --gold-glow: #D4AF37;
+    --white-card: rgba(255, 255, 255, 0.85); /* Un toque translúcido para ver el fondo */
+    --text-dark: #4A2834;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg-gradient);
+    color: var(--text-dark);
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+    padding: 3rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* --- EFECTOS ESPECIALES DEL FONDO --- */
+#bgCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none; /* No interfiere con los clics */
+}
+
+.magic-glow-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: radial-gradient(circle at 50% 30%, rgba(247, 231, 206, 0.3) 0%, transparent 70%);
+    z-index: 1;
+    pointer-events: none;
+    animation: pulseGlow 8s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* Forzar que el contenido flote sobre el fondo mágico */
+.header-container, .calendar-container, .modal-overlay {
+    position: relative;
+    z-index: 2;
+}
+
+/* Encabezado Premium */
+.header-container {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.pre-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--rose-gold);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.main-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    color: var(--wine-main);
+    line-height: 1.2;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.main-title .highlight {
+    color: var(--rose-gold);
+    font-weight: 700;
+}
+
+.dedication {
+    margin-top: 0.8rem;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--wine-main);
+    opacity: 0.8;
+}
+
+/* Contenedor y Grid del Calendario */
+.calendar-container {
+    width: 100%;
+    max-width: 480px;
+    padding: 10px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    align-items: center;
+}
+
+/* Estilo Tarjeta Premium Tradicional (Días 1 al 26) */
+.day-card {
+    aspect-ratio: 1;
+    background: var(--white-card);
+    color: var(--wine-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    font-weight: bold;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(183, 110, 121, 0.15);
+    border: 1px solid rgba(183, 110, 121, 0.25);
+    backdrop-filter: blur(5px); /* Efecto cristal esmerilado sutil */
+    cursor: not-allowed;
+    opacity: 0.4;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.day-card.available {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.day-card.available:hover {
+    transform: translateY(-5px) scale(1.02);
+    background: var(--wine-main);
+    color: var(--champagne);
+    box-shadow: 0 8px 25px rgba(107, 45, 92, 0.35);
+    border-color: var(--wine-main);
+}
+
+.lock-icon {
+    font-size: 0.75rem;
+    position: absolute;
+    bottom: 6px;
+    opacity: 0.6;
+}
+
+/* --- 🎂 DISEÑO MAGNO ESPECIAL CUMPLEAÑOS (DÍA 27) --- */
+.day-card.grand-finale {
+    grid-column: span 4;
+    aspect-ratio: auto;
+    height: 90px;
+    background: linear-gradient(135deg, var(--wine-main) 0%, #4A1539 100%);
+    color: var(--champagne);
+    font-size: 2.2rem;
+    border-radius: 50px;
+    border: 3px solid var(--gold-glow);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    animation: gentlePulse 2.5s infinite ease-in-out;
+}
+
+.day-card.grand-finale::before {
+    content: "✨ ¡EL GRAN DÍA! 🎂 ";
+    font-size: 1.1rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-right: 10px;
+    color: white;
+}
+
+.day-card.grand-finale.available:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 25px var(--gold-glow), 0 0 40px rgba(212, 175, 55, 0.4);
+    background: linear-gradient(135deg, #4A1539 0%, var(--wine-main) 100%);
+}
+
+@keyframes gentlePulse {
+    0% { transform: scale(1); box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+    50% { transform: scale(1.02); box-shadow: 0 0 25px rgba(212, 175, 55, 0.6); }
+    100% { transform: scale(1); box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+}
+
+/* Modales Modernos y Limpios */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(74, 40, 52, 0.6); backdrop-filter: blur(8px);
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0; pointer-events: none; transition: 0.3s ease; z-index: 1000;
+}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+.modal-content {
+    background: white; padding: 2.5rem 2rem; border-radius: 24px;
+    width: 90%; max-width: 400px; text-align: center;
+    box-shadow: 0 15px 35px rgba(74, 40, 52, 0.3);
+    border: 1px solid rgba(183, 110, 121, 0.2);
+    position: relative;
+}
+
+.close-btn {
+    position: absolute; top: 15px; right: 20px;
+    background: none; border: none; color: var(--rose-gold);
+    font-size: 1.8rem; cursor: pointer;
+}
+
+.modal-day-title { font-family: 'Cinzel', serif; color: var(--wine-main); font-size: 1.8rem; }
+.gold-separator { width: 40px; height: 2px; background: var(--rose-gold); margin: 0.8rem auto 1.5rem; }
+.instruction { font-size: 0.85rem; color: #8a737b; margin-bottom: 8px; font-weight: 600; }
+.riddle-text { font-style: italic; font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-dark); line-height: 1.5; }
+
+input[type="text"] {
+    width: 100%; padding: 12px; border: 1px solid rgba(183, 110, 121, 0.4);
+    border-radius: 10px; margin-bottom: 15px; text-align: center; font-size: 1rem;
+    color: var(--text-dark); font-family: 'Montserrat', sans-serif;
+}
+input[type="text"]:focus { outline: none; border-color: var(--wine-main); }
+
+.btn-main {
+    background: var(--wine-main); color: var(--champagne); border: none;
+    padding: 14px; border-radius: 10px; cursor: pointer; width: 100%;
+    font-weight: 600; font-size: 1rem; font-family: 'Montserrat', sans-serif;
+}
+
+/* Fase de Éxito */
+.success-icon { font-size: 3rem; margin-bottom: 0.5rem; animation: popIcon 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes popIcon { from { transform: scale(0); } to { transform: scale(1); } }
+
+.reveal-phrase { font-family: 'Cinzel', serif; color: var(--wine-main); font-size: 1.3rem; line-height: 1.4; }
+.success-text { font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; }
+
+.btn-gold-action {
+    display: block; text-decoration: none; text-align: center;
+    background: linear-gradient(45deg, var(--rose-gold), #a35662);
+    color: white; padding: 14px; border-radius: 10px;
+    font-weight: 600; font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(183, 110, 121, 0.4);
+    transition: all 0.2s;
+}
+.btn-gold-action:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(183, 110, 121, 0.6); }
+
+.hidden { display: none !important; }
+.error-msg { color: #D32F2F; font-size: 0.8rem; display: none; margin-top: 8px; font-weight: 600; }

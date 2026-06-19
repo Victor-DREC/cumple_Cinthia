@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Calendario Especial de Cumpleaños 🎂</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="magic-glow-overlay"></div>
+
+    <header class="header-container">
+        <span class="pre-title">CUENTA REGRESIVA ESPECIAL</span>
+        <h1 class="main-title">El Mes de<br><span class="highlight">Tu Cumpleaños</span></h1>
+        <p class="dedication">Cada día un recuerdo, cada día un acertijo... ❤️</p>
+    </header>
+
+    <main class="calendar-container">
+        <div class="calendar-grid" id="calendarGrid"></div>
+    </main>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeModal">&times;</button>
+            
+            <div id="riddlePhase">
+                <h2 class="modal-day-title" id="modalDayTitle">Día X</h2>
+                <div class="gold-separator"></div>
+                <p class="instruction">Para abrir tu regalo de hoy, resuelve esto:</p>
+                <p class="riddle-text" id="riddleText"></p>
+                <input type="text" id="riddleAnswer" placeholder="Escribe tu respuesta aquí...">
+                <button class="btn-main" id="submitAnswerBtn">Desbloquear Sorpresa ✨</button>
+                <p class="error-msg" id="errorMsg">¡Respuesta incorrecta! Inténtalo de nuevo, mi amor. 💕</p>
+            </div>
+
+            <div id="giftPhase" class="hidden">
+                <div class="success-icon">🎉</div>
+                <h2 class="reveal-phrase" id="revealPhrase"></h2>
+                <div class="gold-separator"></div>
+                <p class="success-text">Tu respuesta es correcta. Tu regalo digital está listo aquí:</p>
+                <a href="#" id="giftLinkBtn" class="btn-gold-action" target="_blank">Abrir Regalo Especial 🎁</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
