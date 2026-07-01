@@ -1,4 +1,4 @@
-// true = desbloquea todo para probar de inmediato | false = producción en tiempo real (Julio 2026)
+// true = desbloquea todo para probar | false = producción en tiempo real (Julio 2026)
 const MODO_DESARROLLO = false; 
 
 const giftsData = {
