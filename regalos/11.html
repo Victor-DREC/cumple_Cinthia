@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Día 11: Una Obra de Arte Exclusiva 🎨</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #FFF5F6 0%, #FCE4E6 100%);
+            --wine-main: #6B2D5C;
+            --rose-gold: #B76E79;
+            --champagne: #F7E7CE;
+            --white-card: rgba(255, 255, 255, 0.85);
+            --text-dark: #4A2834;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .magic-glow-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 30%, rgba(247, 231, 206, 0.35) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        header, .gallery-container, .back-btn-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .day-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--rose-gold);
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.1rem;
+            color: var(--wine-main);
+            line-height: 1.2;
+        }
+
+        /* --- CONTENEDOR EXPOSICIÓN --- */
+        .gallery-container {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+
+        /* Marco de la obra de arte */
+        .art-frame {
+            background: var(--white-card);
+            border: 12px solid white;
+            border-radius: 4px;
+            box-shadow: 0 15px 35px rgba(107, 45, 92, 0.12), 
+                        inset 0 0 10px rgba(0,0,0,0.05);
+            padding: 15px;
+            width: 100%;
+            aspect-ratio: 1 / 1; /* Cuadrado perfecto estilo lienzo */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        /* Canvas del Dibujo */
+        .art-canvas {
+            background: #FAFAFA;
+            width: 100%;
+            height: 100%;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            display: block;
+        }
+
+        /* --- FICHÁ TÉCNICA DEL MUSEO --- */
+        .museum-label {
+            background: rgba(255, 255, 255, 0.9);
+            border-left: 4px solid var(--wine-main);
+            border-radius: 4px 16px 16px 4px;
+            padding: 1.2rem;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(107, 45, 92, 0.05);
+            text-align: left;
+        }
+
+        .art-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            color: var(--wine-main);
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .art-meta {
+            font-size: 0.78rem;
+            color: var(--rose-gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .art-description {
+            font-size: 0.88rem;
+            line-height: 1.5;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        .back-btn-container {
+            margin-top: 2.5rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--wine-main);
+            border: 1px solid var(--wine-main);
+            padding: 10px 22px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: var(--wine-main);
+            color: var(--champagne);
+            box-shadow: 0 4px 15px rgba(107, 45, 92, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+    <div class="magic-glow-overlay"></div>
+
+    <header>
+        <p class="day-title">SORPRESA DEL DÍA 11</p>
+        <h1 class="main-title">Una Obra Exclusiva</h1>
+    </header>
+
+    <main class="gallery-container">
+        
+        <!-- LIENZO / MARCO DE ARTE -->
+        <div class="art-frame">
+            <canvas id="myDrawingCanvas" class="art-canvas" width="400" height="400"></canvas>
+        </div>
+
+        <!-- TARJETA DESCRIPTIVA (FICHA TÉCNICA) -->
+        <article class="museum-label">
+            <h2 class="art-title">"Retrato de un Sentimiento Eterno"</h2>
+            <p class="art-meta">Por: Tu Amor • Digital en Lienzo • 2026</p>
+            <p class="art-description">
+                "Tal vez no domine los pinceles de un artista renacentista, ni las técnicas digitales más avanzadas, pero cada trazo, línea y color fue hecho pensando en ti. Esta pieza es única porque contiene el ingrediente más valioso del mundo: las ganas de sacarte una sonrisa." 💖
+            </p>
+        </article>
+
+    </main>
+
+    <div class="back-btn-container">
+        <a href="../index.html" class="back-btn">Volver al Calendario 🗓️</a>
+    </div>
+
+    <script>
+        // --- 🛠️ CARGA DEL DIBUJO EN EL CANVAS ---
+        // Guarda tu ilustración digital en la carpeta 'img/' con el nombre 'dibujo.jpeg' (o .png)
+        const rutaDibujo = '../img/dibujo.jpeg'; 
+
+        function cargarDibujo() {
+            const canvas = document.getElementById('myDrawingCanvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.src = rutaDibujo;
+            
+            img.onload = function() {
+                // Limpiar el canvas antes de dibujar
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Lógica de escalado proporcional (Object-fit Contain para que no se recorte tu dibujo)
+                const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+                const x = (canvas.width / 2) - (img.width / 2) * scale;
+                const y = (canvas.height / 2) - (img.height / 2) * scale;
+                
+                // Fondo blanco limpio por si el dibujo tiene transparencias o proporciones distintas
+                ctx.fillStyle = '#FAFAFA';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+            };
+        }
+
+        // Ejecutar la función al cargar la página
+        cargarDibujo();
+
+
+        // --- 🌟 MOTOR DE PALABRAS FLOTANTES PERSONALIZADAS CONSERVADO ---
+        function initBgParticles() {
+            const canvasBg = document.getElementById('bgCanvas');
+            const ctxBg = canvasBg.getContext('2d');
+            let particlesArray = [];
+            
+            function resizeCanvas() {
+                canvasBg.width = window.innerWidth;
+                canvasBg.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const loveWords = [
+                "Feliz Cumpleaños", 
+                "Mi reina", 
+                "Mi princesa", 
+                "Mi bebita", 
+                "Mi mundo", 
+                "Mi esposita", 
+                "#26", 
+                "❤️", 
+                "💕"
+            ];
+            
+            const colors = ['#B76E79', '#6B2D5C', '#FFD1DC', '#4A2834'];
+
+            class LoveWordParticle {
+                constructor() {
+                    this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                    this.x = Math.random() * canvasBg.width;
+                    this.y = canvasBg.height + (Math.random() * 100);
+                    
+                    this.fontSize = this.text.includes('#') || this.text.length < 3 
+                        ? Math.random() * 12 + 16  
+                        : Math.random() * 6 + 13;  
+                    
+                    this.speedX = Math.random() * 0.4 - 0.2; 
+                    this.speedY = Math.random() * -0.6 - 0.2; 
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.4 + 0.3; 
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    if (this.y < -30) {
+                        this.y = canvasBg.height + 20;
+                        this.x = Math.random() * canvasBg.width;
+                        this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                        this.alpha = Math.random() * 0.4 + 0.3;
+                    }
+                }
+                
+                draw() {
+                    ctxBg.save();
+                    ctxBg.globalAlpha = this.alpha;
+                    ctxBg.fillStyle = this.color;
+                    ctxBg.font = `600 ${this.fontSize}px 'Montserrat', sans-serif`;
+                    ctxBg.textAlign = 'center';
+                    ctxBg.fillText(this.text, this.x, this.y);
+                    ctxBg.restore();
+                }
+            }
+
+            function createParticles() {
+                const numberOfParticles = 20; 
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new LoveWordParticle());
+                    particlesArray[i].y = Math.random() * canvasBg.height;
+                }
+            }
+
+            function animate() {
+                ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+                particlesArray.forEach(p => { 
+                    p.update(); 
+                    p.draw(); 
+                });
+                requestAnimationFrame(animate);
+            }
+
+            createParticles();
+            animate();
+        }
+
+        initBgParticles();
+    </script>
+</body>
+</html>

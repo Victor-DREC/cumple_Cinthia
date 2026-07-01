@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20 Razones para Admirarte ❤️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #FFF5F6 0%, #FCE4E6 100%);
+            --wine-main: #6B2D5C;
+            --rose-gold: #B76E79;
+            --champagne: #F7E7CE;
+            --white-card: rgba(255, 255, 255, 0.85);
+            --text-dark: #4A2834;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            padding: 3rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* --- 🌟 MOTOR DE EFECTOS ESPECIALES DEL FONDO --- */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .magic-glow-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 30%, rgba(247, 231, 206, 0.25) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        header, .main-container, .back-btn-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            padding: 0 1rem;
+        }
+
+        .day-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--rose-gold);
+            letter-spacing: 4px;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            color: var(--wine-main);
+            line-height: 1.3;
+        }
+
+        .subtitle {
+            margin-top: 1rem;
+            font-size: 1rem;
+            max-width: 480px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            opacity: 0.9;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+        }
+
+        /* --- 📋 CONTENEDOR DE LA LISTA DE ADMIRACIÓN --- */
+        .main-container {
+            width: 100%;
+            max-width: 550px; 
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* TARJETAS INDIVIDUALES DE REVELADO */
+        .reason-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.75));
+            border: 1px solid rgba(183, 110, 121, 0.25);
+            border-left: 5px solid var(--rose-gold); 
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            box-shadow: 0 5px 20px rgba(107, 45, 92, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            opacity: 0;
+            transform: translateY(25px);
+        }
+
+        .reason-card.reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reason-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-left: 5px solid var(--wine-main);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 10px 30px rgba(107, 45, 92, 0.15);
+        }
+
+        .reason-number {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--wine-main);
+            min-width: 45px;
+            height: 45px;
+            background: var(--champagne);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(183, 110, 121, 0.3);
+            flex-shrink: 0; 
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.5);
+        }
+
+        .reason-text {
+            font-size: 0.98rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+            font-weight: 500;
+            text-align: left;
+            margin-top: 2px;
+        }
+
+        .back-btn-container {
+            margin-top: 4rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--wine-main);
+            border: 2px solid var(--wine-main);
+            padding: 12px 28px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(5px);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .back-btn:hover {
+            background: var(--wine-main);
+            color: var(--champagne);
+            box-shadow: 0 6px 20px rgba(107, 45, 92, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 480px) {
+            .reason-card {
+                padding: 1.2rem;
+                gap: 15px;
+            }
+            .reason-number {
+                min-width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+            .reason-text {
+                font-size: 0.92rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+    <div class="magic-glow-overlay"></div>
+
+    <header>
+        <p class="day-title">SORPRESA 5</p>
+        <h1 class="main-title">Lo Que Admiro de Ti</h1>
+        <p class="subtitle">Elegir solo veinte cosas es casi imposible, pero aquí hay un pedacito de todo lo que me enamora de ti mientras cuento los días para nuestro primer abrazo. 💖✈️</p>
+    </header>
+
+    <main class="main-container">
+        
+        <div class="reason-card">
+            <div class="reason-number">01</div>
+            <p class="reason-text">Tu hermosa resiliencia para acortar todos los kilómetros que nos separan con una simple sonrisa a través de la pantalla. 🌍✨</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">02</div>
+            <p class="reason-text">La dulzura infinita que transmites en cada mensaje y nota de voz, haciéndome sentir que estás sentada justo aquí, a mi lado. 🎙️💞</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">03</div>
+            <p class="reason-text">Tu inteligencia y la forma brillante en que me pintas un mundo que me muero por explorar, por fin, de tu mano. 🧠✈️</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">04</div>
+            <p class="reason-text">La pasión que pones en todo lo que haces, inspirándome a ser un hombre mejor mientras espero el día de nuestro encuentro. ❤️‍🔥🌱</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">05</div>
+            <p class="reason-text">Esa mirada tuya en las videollamadas, capaz de darme una paz absoluta y calmar cualquier ansiedad que me provoque la distancia. 📱🥺</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">06</div>
+            <p class="reason-text">La empatía natural que tienes para escucharme y comprenderme; eres mi refugio más seguro aunque aún no nos hayamos tocado. 🫂🏡</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">07</div>
+            <p class="reason-text">Tu risa espontánea a través del teléfono, que rápidamente se ha convertido en la banda sonora favorita de todos mis días. 🎶🤭</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">08</div>
+            <p class="reason-text">La paciencia inquebrantable que tienes para mantener viva esta llama, demostrándome que nuestro amor es más fuerte que cualquier frontera. 🕯️🗺️</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">09</div>
+            <p class="reason-text">Tu madurez para conversar y la magia con la que soñamos despiertos con ese primer momento juntos que, te prometo, será inolvidable. 💭✨</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">10</div>
+            <p class="reason-text">La calidez de tu corazón, que me hace sentir en casa y me abriga cada noche sin importar el rincón del mundo en el que estemos. ☕❤️</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">11</div>
+            <p class="reason-text">Tu originalidad incomparable; me fascina descubrir cada día un detalle nuevo de ti que me confirma que esperarte vale toda la pena. 🎨🌟</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">12</div>
+            <p class="reason-text">La forma tan linda en la que te emocionas cuando planeamos los viajes que haremos juntos, imaginándonos caminando desde las calles de París hasta las playas de Baja California. 🗼🏖️</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">13</div>
+            <p class="reason-text">Tu nobleza y la pureza de tu alma, cualidades tan grandes que lograron traspasar una pantalla y robarse mi corazón por completo. 🕊️💘</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">14</div>
+            <p class="reason-text">Tu valentía por apostar por este amor a distancia, confiando ciegamente en nosotros y en el futuro tan hermoso que estamos construyendo. 🏰🤝</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">15</div>
+            <p class="reason-text">La increíble fortaleza que me transmites; gracias a ti he aprendido que la espera es solo un pequeño capítulo en nuestra historia eterna. 📖⏳</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">16</div>
+            <p class="reason-text">Tu maravilloso sentido del humor, capaz de iluminar mis horas de trabajo y transformar cualquier día gris en uno absolutamente perfecto. 😂☀️</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">17</div>
+            <p class="reason-text">La honestidad y lealtad incondicional que me demuestras constantemente, haciéndome sentir el hombre más afortunado y seguro del universo. 🔐🌌</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">18</div>
+            <p class="reason-text">Esa luz tan propia que irradias; me maravilla profundamente cómo puedes brillar tan fuerte en mi vida estando aún físicamente lejos. ✨🔭</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">19</div>
+            <p class="reason-text">La perfección con la que encajas en todos mis planes, ya sea para un domingo tranquilo en casa o para ver un atardecer mágico en Santorini. 🌅🍷</p>
+        </div>
+
+        <div class="reason-card">
+            <div class="reason-number">20</div>
+            <p class="reason-text">Simplemente por ser tú, mi esposita, porque aunque mis ojos aún no te hayan visto en persona, mi alma supo reconocer la tuya desde el primer instante en que hablamos. 👰🏻‍♀️💍❤️</p>
+        </div>
+
+    </main>
+
+    <div class="back-btn-container">
+        <a href="../index.html" class="back-btn">Volver al Calendario 🗓️</a>
+    </div>
+
+    <script>
+        // --- 👁️ EFECTO INTERACTIVO DE REVELADO (SCROLL ANIMATION) ---
+        function initScrollReveal() {
+            const cards = document.querySelectorAll('.reason-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('reveal');
+                    }
+                });
+            }, {
+                threshold: 0.15 
+            });
+
+            cards.forEach(card => observer.observe(card));
+        }
+
+        // --- 🌟 MOTOR DE EFECTOS ESPECIALES Y PALABRAS (CONSOLIDADO) ---
+        function initBgEffects() {
+            const canvas = document.getElementById('bgCanvas');
+            const ctx = canvas.getContext('2d');
+            let elementsArray = [];
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            // Configuración para las palabras flotantes
+            const loveWords = ["Feliz Cumpleaños", "Mi reina", "Mi princesa", "Mi bebita", "Mi mundo", "Mi esposita", "#26", "❤️", "💕"];
+            const wordColors = ['#B76E79', '#6B2D5C', '#FFD1DC', '#4A2834'];
+            // Configuración para las partículas circulares
+            const dotColors = ['#B76E79', '#D4AF37', '#6B2D5C', '#FFD1DC', '#FFFFFF'];
+
+            class FloatingElement {
+                constructor(isWord) {
+                    this.isWord = isWord;
+                    this.x = Math.random() * canvas.width;
+                    
+                    if (this.isWord) {
+                        this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                        this.y = Math.random() * canvas.height;
+                        this.fontSize = this.text.includes('#') || this.text.length < 3 ? Math.random() * 12 + 16 : Math.random() * 6 + 13;
+                        this.speedX = Math.random() * 0.4 - 0.2;
+                        this.speedY = Math.random() * -0.5 - 0.2;
+                        this.color = wordColors[Math.floor(Math.random() * wordColors.length)];
+                        this.alpha = Math.random() * 0.4 + 0.2;
+                    } else {
+                        this.y = Math.random() * canvas.height;
+                        this.size = Math.random() * 2.5 + 1;
+                        this.speedX = Math.random() * 0.4 - 0.2;
+                        this.speedY = Math.random() * -0.4 - 0.1;
+                        this.color = dotColors[Math.floor(Math.random() * dotColors.length)];
+                        this.alpha = Math.random() * 0.5 + 0.2;
+                    }
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    if (this.y < -30 || this.alpha <= 0) {
+                        this.y = canvas.height + 20;
+                        this.x = Math.random() * canvas.width;
+                        if (this.isWord) {
+                            this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                            this.alpha = Math.random() * 0.4 + 0.2;
+                        } else {
+                            this.alpha = Math.random() * 0.5 + 0.2;
+                        }
+                    }
+                }
+                
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.alpha;
+                    if (this.isWord) {
+                        ctx.fillStyle = this.color;
+                        ctx.font = `600 ${this.fontSize}px 'Montserrat', sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText(this.text, this.x, this.y);
+                    } else {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fillStyle = this.color;
+                        ctx.shadowBlur = 8;
+                        ctx.shadowColor = this.color;
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                }
+            }
+
+            function createElements() {
+                for (let i = 0; i < 20; i++) elementsArray.push(new FloatingElement(true));
+                for (let i = 0; i < 30; i++) elementsArray.push(new FloatingElement(false));
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                elementsArray.forEach(el => { 
+                    el.update(); 
+                    el.draw(); 
+                });
+                requestAnimationFrame(animate);
+            }
+
+            createElements();
+            animate();
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            initScrollReveal();
+            initBgEffects();
+        });
+    </script>
+</body>
+</html>
