@@ -1,5 +1,5 @@
 // true = desbloquea todo para probar | false = producción en tiempo real (Julio 2026)
-const MODO_DESARROLLO = true; 
+const MODO_DESARROLLO = false; 
 
 const giftsData = {
     1: { riddle: "Vuelo sin alas, hablo sin boca, y viajo de corazón a corazón. ¿Qué soy?", answer: "Un pensamiento", phrase: "«Eres el dulce que le faltaba a mi vida entera.»", url: "regalos/dia1.html" },
