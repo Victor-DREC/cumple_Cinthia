@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestro Mapa de Sueños 🌎</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #FFF5F6 0%, #FCE4E6 100%);
+            --wine-main: #6B2D5C;
+            --rose-gold: #B76E79;
+            --champagne: #F7E7CE;
+            --white-card: rgba(255, 255, 255, 0.85);
+            --text-dark: #4A2834;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .magic-glow-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 30%, rgba(247, 231, 206, 0.35) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        header, .map-container, .back-btn-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .day-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--rose-gold);
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.1rem;
+            color: var(--wine-main);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            margin-top: 0.6rem;
+            font-size: 0.95rem;
+            max-width: 460px;
+            line-height: 1.5;
+            opacity: 0.85;
+        }
+
+        /* --- CONTENEDOR DE LA RUTA --- */
+        .map-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            position: relative;
+        }
+
+        /* Línea punteada que conecta los destinos (Efecto mapa de ruta) */
+        .map-container::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            bottom: 20px;
+            left: 35px;
+            width: 2px;
+            border-left: 2px dashed var(--rose-gold);
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+        /* --- TARJETAS DE DESTINOS --- */
+        .destination-card {
+            background: var(--white-card);
+            border: 1px solid rgba(183, 110, 121, 0.3);
+            border-radius: 20px;
+            padding: 1.2rem;
+            box-shadow: 0 8px 25px rgba(107, 45, 92, 0.06);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .destination-card:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Pin del Mapa */
+        .map-pin {
+            width: 40px;
+            height: 40px;
+            background: var(--wine-main);
+            color: var(--champagne);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(107, 45, 92, 0.2);
+        }
+
+        .destination-info {
+            flex-grow: 1;
+        }
+
+        .destination-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--wine-main);
+            margin-bottom: 2px;
+        }
+
+        .destination-desc {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        /* --- CANVAS PARA LAS IMÁGENES --- */
+        .image-canvas {
+            background: #F5EAEB;
+            border: 2px solid white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: block;
+            width: 110px;
+            height: 110px;
+            flex-shrink: 0;
+        }
+
+        .back-btn-container {
+            margin-top: 2.5rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--wine-main);
+            border: 1px solid var(--wine-main);
+            padding: 10px 22px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: var(--wine-main);
+            color: var(--champagne);
+            box-shadow: 0 4px 15px rgba(107, 45, 92, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+    <div class="magic-glow-overlay"></div>
+
+    <header>
+        <p class="day-title">SORPRESA 9</p>
+        <h1 class="main-title">Nuestro Mapa de Sueños</h1>
+        <p class="subtitle">El mundo es demasiado grande como para no recorrerlo juntos. Aquí están los primeros destinos que esperan por nosotros. ✈️❤️</p>
+    </header>
+
+    <main class="map-container">
+        
+        <!-- DESTINO 1: PARÍS -->
+        <section class="destination-card">
+            <div class="map-pin">1</div>
+            <div class="destination-info">
+                <h3 class="destination-name">París</h3>
+                <p class="destination-desc">Caminar de la mano bajo las luces de la Torre Eiffel y decirte cuánto te amo en la ciudad del amor.</p>
+            </div>
+            <canvas id="canvasParis" class="image-canvas" width="150" height="150"></canvas>
+        </section>
+
+        <!-- DESTINO 2: ITALIA -->
+        <section class="destination-card">
+            <div class="map-pin">2</div>
+            <div class="destination-info">
+                <h3 class="destination-name">Italia</h3>
+                <p class="destination-desc">Recorrer los canales de Venecia en góndola y disfrutar de la historia, las pizzas y los helados eternos.</p>
+            </div>
+            <canvas id="canvasItalia" class="image-canvas" width="150" height="150"></canvas>
+        </section>
+
+        <!-- DESTINO 3: SANTORINI -->
+        <section class="destination-card">
+            <div class="map-pin">3</div>
+            <div class="destination-info">
+                <h3 class="destination-name">Santorini</h3>
+                <p class="destination-desc">Mirar el atardecer más hermoso frente a las casitas blancas y el mar azul de Grecia.</p>
+            </div>
+            <canvas id="canvasSantorini" class="image-canvas" width="150" height="150"></canvas>
+        </section>
+
+        <!-- DESTINO 4: ESPAÑA -->
+        <section class="destination-card">
+            <div class="map-pin">4</div>
+            <div class="destination-info">
+                <h3 class="destination-name">España</h3>
+                <p class="destination-desc">Disfrutar juntos del arte, la cultura, unas tapas deliciosas y perdernos en sus calles mágicas.</p>
+            </div>
+            <canvas id="canvasEspana" class="image-canvas" width="150" height="150"></canvas>
+        </section>
+
+        <!-- DESTINO 5: BAJA CALIFORNIA -->
+        <section class="destination-card">
+            <div class="map-pin">5</div>
+            <div class="destination-info">
+                <h3 class="destination-name">Baja California</h3>
+                <p class="destination-desc">Un escape perfecto bajo el sol, la brisa de la playa y la complicidad de nuestro amor.</p>
+            </div>
+            <canvas id="canvasBaja" class="image-canvas" width="150" height="150"></canvas>
+        </section>
+
+    </main>
+
+    <div class="back-btn-container">
+        <a href="../index.html" class="back-btn">Volver al Calendario 🗓️</a>
+    </div>
+
+    <script>
+        // --- 🛠️ CARGA DE IMÁGENES EN LOS CANVAS ---
+        // Configura los nombres de tus archivos dentro de la carpeta '../img/'
+        const imagenesDestinos = {
+            'canvasParis': '../img/paris.jpeg',
+            'canvasItalia': '../img/italia.jpeg',
+            'canvasSantorini': '../img/santorini.jpeg',
+            'canvasEspana': '../img/espana.jpeg',
+            'canvasBaja': '../img/baja_california.jpeg'
+        };
+
+        function cargarImagenesEnCanvas() {
+            Object.keys(imagenesDestinos).forEach(canvasId => {
+                const canvasIdTarget = document.getElementById(canvasId);
+                if (!canvasIdTarget) return;
+                
+                const ctxTarget = canvasIdTarget.getContext('2d');
+                const imgTarget = new Image();
+                imgTarget.src = imagenesDestinos[canvasId];
+                
+                imgTarget.onload = function() {
+                    // Limpiar canvas
+                    ctxTarget.clearRect(0, 0, canvasIdTarget.width, canvasIdTarget.height);
+                    
+                    // Lógica para centrar y recortar la imagen de forma proporcional (Object-fit Cover)
+                    const scale = Math.max(canvasIdTarget.width / imgTarget.width, canvasIdTarget.height / imgTarget.height);
+                    const x = (canvasIdTarget.width / 2) - (imgTarget.width / 2) * scale;
+                    const y = (canvasIdTarget.height / 2) - (imgTarget.height / 2) * scale;
+                    
+                    ctxTarget.drawImage(imgTarget, x, y, imgTarget.width * scale, imgTarget.height * scale);
+                };
+            });
+        }
+
+        // Llamamos a la función de carga
+        cargarImagenesEnCanvas();
+
+
+        // --- 🌟 MOTOR DE PALABRAS FLOTANTES PERSONALIZADAS CONSERVADO ---
+        function initBgParticles() {
+            const canvasBg = document.getElementById('bgCanvas');
+            const ctxBg = canvasBg.getContext('2d');
+            let particlesArray = [];
+            
+            function resizeCanvas() {
+                canvasBg.width = window.innerWidth;
+                canvasBg.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const loveWords = [
+                "Feliz Cumpleaños", 
+                "Mi reina", 
+                "Mi princesa", 
+                "Mi bebita", 
+                "Mi mundo", 
+                "Mi esposita", 
+                "#26", 
+                "❤️", 
+                "💕"
+            ];
+            
+            const colors = ['#B76E79', '#6B2D5C', '#FFD1DC', '#4A2834'];
+
+            class LoveWordParticle {
+                constructor() {
+                    this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                    this.x = Math.random() * canvasBg.width;
+                    this.y = canvasBg.height + (Math.random() * 100);
+                    
+                    this.fontSize = this.text.includes('#') || this.text.length < 3 
+                        ? Math.random() * 12 + 16  
+                        : Math.random() * 6 + 13;  
+                    
+                    this.speedX = Math.random() * 0.4 - 0.2; 
+                    this.speedY = Math.random() * -0.6 - 0.2; 
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.4 + 0.3; 
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    if (this.y < -30) {
+                        this.y = canvasBg.height + 20;
+                        this.x = Math.random() * canvasBg.width;
+                        this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                        this.alpha = Math.random() * 0.4 + 0.3;
+                    }
+                }
+                
+                draw() {
+                    ctxBg.save();
+                    ctxBg.globalAlpha = this.alpha;
+                    ctxBg.fillStyle = this.color;
+                    ctxBg.font = `600 ${this.fontSize}px 'Montserrat', sans-serif`;
+                    ctxBg.textAlign = 'center';
+                    ctxBg.fillText(this.text, this.x, this.y);
+                    ctxBg.restore();
+                }
+            }
+
+            function createParticles() {
+                const numberOfParticles = 20; 
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new LoveWordParticle());
+                    particlesArray[i].y = Math.random() * canvasBg.height;
+                }
+            }
+
+            function animate() {
+                ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+                particlesArray.forEach(p => { 
+                    p.update(); 
+                    p.draw(); 
+                });
+                requestAnimationFrame(animate);
+            }
+
+            createParticles();
+            animate();
+        }
+
+        initBgParticles();
+    </script>
+</body>
+</html>

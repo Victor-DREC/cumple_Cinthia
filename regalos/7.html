@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Día 7: El Instante que Cambió Todo 🎤</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #FFF5F6 0%, #FCE4E6 100%);
+            --wine-main: #6B2D5C;
+            --rose-gold: #B76E79;
+            --champagne: #F7E7CE;
+            --white-card: rgba(255, 255, 255, 0.82);
+            --text-dark: #4A2834;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .magic-glow-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 30%, rgba(247, 231, 206, 0.35) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        header, .player-container, .back-btn-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .day-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--rose-gold);
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.1rem;
+            color: var(--wine-main);
+            line-height: 1.2;
+        }
+
+        /* --- CONTENEDOR DEL REPRODUCTOR DE AUDIO DE LUJO --- */
+        .player-container {
+            width: 100%;
+            max-width: 360px;
+            background: var(--white-card);
+            border: 1px solid rgba(183, 110, 121, 0.3);
+            border-radius: 24px;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 10px 30px rgba(107, 45, 92, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Icono de Micrófono / Vinilo Giratorio */
+        .audio-art {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--wine-main), var(--rose-gold));
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            color: var(--champagne);
+            box-shadow: 0 8px 20px rgba(107, 45, 92, 0.2);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        /* Animación de rotación cuando está activo */
+        .audio-art.playing {
+            animation: rotateArt 8s linear infinite;
+        }
+
+        @keyframes rotateArt {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .audio-info h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--wine-main);
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+        }
+
+        .audio-info p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            line-height: 1.4;
+            margin-bottom: 1.5rem;
+            padding: 0 10px;
+        }
+
+        /* --- BARRAS VISUALIZADORAS DE ONDA --- */
+        .wave-visualizer {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 4px;
+            height: 30px;
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+
+        .wave-bar {
+            width: 4px;
+            height: 5px;
+            background-color: var(--rose-gold);
+            border-radius: 2px;
+            transition: height 0.1s ease;
+        }
+
+        /* Estilos de animación cuando el audio se reproduce */
+        .playing .wave-bar:nth-child(1) { animation: bounce 0.6s infinite alternate 0.1s; }
+        .playing .wave-bar:nth-child(2) { animation: bounce 0.4s infinite alternate 0.3s; }
+        .playing .wave-bar:nth-child(3) { animation: bounce 0.7s infinite alternate 0.0s; }
+        .playing .wave-bar:nth-child(4) { animation: bounce 0.5s infinite alternate 0.5s; }
+        .playing .wave-bar:nth-child(5) { animation: bounce 0.8s infinite alternate 0.2s; }
+        .playing .wave-bar:nth-child(6) { animation: bounce 0.4s infinite alternate 0.4s; }
+        .playing .wave-bar:nth-child(7) { animation: bounce 0.6s infinite alternate 0.1s; }
+
+        @keyframes bounce {
+            from { height: 5px; }
+            to { height: 30px; }
+        }
+
+        /* --- BOTONES DE CONTROL --- */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .play-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--wine-main);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(107, 45, 92, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .play-btn:hover {
+            transform: scale(1.08);
+            background: #542248;
+        }
+
+        .play-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Texto de estado del reproductor */
+        .status-text {
+            font-size: 0.8rem;
+            color: var(--rose-gold);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .back-btn-container {
+            margin-top: 2.5rem;
+            text-align: center;
+        }
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--wine-main);
+            border: 1px solid var(--wine-main);
+            padding: 10px 22px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: var(--wine-main);
+            color: var(--champagne);
+            box-shadow: 0 4px 15px rgba(107, 45, 92, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+    <div class="magic-glow-overlay"></div>
+
+    <header>
+        <p class="day-title">SORPRESA DEL DÍA 7</p>
+        <h1 class="main-title">Nuestra Primera Página</h1>
+    </header>
+
+    <main class="player-container">
+        <!-- Arte central que girará al reproducir -->
+        <div class="audio-art" id="artNode">🎤</div>
+
+        <div class="audio-info">
+            <h3>El día que te conocí</h3>
+            <p>"Dale al play y escucha atentamente... Aquí te cuento desde el fondo de mi corazón cómo quedó grabado en mi mente aquel instante mágico." ✨</p>
+        </div>
+
+        <!-- Ecualizador estético -->
+        <div class="wave-visualizer" id="visualizerNode">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+        </div>
+
+        <!-- Controles nativos ocultos mediante JS, manejados por este botón premium -->
+        <div class="controls">
+            <button class="play-btn" id="playBtn" aria-label="Reproducir">▶️</button>
+        </div>
+        <p class="status-text" id="statusLabel">Detenido</p>
+
+        <!-- Elemento de audio invisible conectado a tu enlace de Drive -->
+        <!-- NOTA: Reemplaza 'TU_ID_DE_DRIVE' con el ID real de tu archivo subido -->
+        <audio id="loveAudio" src="https://docs.google.com/uc?export=download&id=TU_ID_DE_DRIVE"></audio>
+    </main>
+
+    <div class="back-btn-container">
+        <a href="../index.html" class="back-btn">Volver al Calendario 🗓️</a>
+    </div>
+
+    <script>
+        const audio = document.getElementById('loveAudio');
+        const playBtn = document.getElementById('playBtn');
+        const artNode = document.getElementById('artNode');
+        const visualizerNode = document.getElementById('visualizerNode');
+        const statusLabel = document.getElementById('statusLabel');
+
+        playBtn.addEventListener('click', toggleAudio);
+
+        function toggleAudio() {
+            if (audio.paused) {
+                audio.play()
+                    .then(() => {
+                        playBtn.textContent = '⏸️';
+                        artNode.classList.add('playing');
+                        visualizerNode.classList.add('playing');
+                        statusLabel.textContent = 'Escuchando... ❤️';
+                    })
+                    .catch(err => {
+                        console.log("Error al reproducir: ", err);
+                        alert("Asegúrate de cambiar 'TU_ID_DE_DRIVE' en el código por el ID real de tu archivo.");
+                    });
+            } else {
+                audio.pause();
+                playBtn.textContent = '▶️';
+                artNode.classList.remove('playing');
+                visualizerNode.classList.remove('playing');
+                statusLabel.textContent = 'Pausado';
+            }
+        }
+
+        // Si el audio termina por completo, reestablecer el diseño
+        audio.addEventListener('ended', () => {
+            playBtn.textContent = '▶️';
+            artNode.classList.remove('playing');
+            visualizerNode.classList.remove('playing');
+            statusLabel.textContent = 'Terminado';
+        });
+
+        // --- MOTOR DE PARTICULAS FLOTANTES MANTENIDO ---
+        function initBgParticles() {
+            const canvasBg = document.getElementById('bgCanvas');
+            const ctxBg = canvasBg.getContext('2d');
+            let particlesArray = [];
+            
+            function resizeCanvas() {
+                canvasBg.width = window.innerWidth;
+                canvasBg.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const colors = ['#B76E79', '#D4AF37', '#6B2D5C', '#FFD1DC', '#FFFFFF'];
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvasBg.width;
+                    this.y = Math.random() * canvasBg.height;
+                    this.size = Math.random() * 2.5 + 1;
+                    this.speedX = Math.random() * 0.4 - 0.2;
+                    this.speedY = Math.random() * -0.4 - 0.1;
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.5 + 0.2;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.y < 0) {
+                        this.y = canvasBg.height;
+                        this.x = Math.random() * canvasBg.width;
+                    }
+                }
+                draw() {
+                    ctxBg.save();
+                    ctxBg.globalAlpha = this.alpha;
+                    ctxBg.beginPath();
+                    ctxBg.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctxBg.fillStyle = this.color;
+                    ctxBg.fill();
+                    ctxBg.restore();
+                }
+            }
+
+            for (let i = 0; i < 30; i++) particlesArray.push(new Particle());
+
+            function animate() {
+                ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+                particlesArray.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // --- 🌟 NUEVO MOTOR DE PALABRAS FLOTANTES PERSONALIZADAS ---
+        function initBgParticles() {
+            const canvasBg = document.getElementById('bgCanvas');
+            const ctxBg = canvasBg.getContext('2d');
+            let particlesArray = [];
+            
+            function resizeCanvas() {
+                canvasBg.width = window.innerWidth;
+                canvasBg.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            // Lista de palabras y detalles personalizados que flotarán en el fondo
+            const loveWords = [
+                "Feliz Cumple", 
+                "Mi reina", 
+                "Mi princesa", 
+                "Mi bebita", 
+                "Mi mundo", 
+                "Mi esposita", 
+                "#26", 
+                "❤️", 
+                "💕"
+            ];
+            
+            const colors = ['#B76E79', '#6B2D5C', '#FFD1DC', '#4A2834'];
+
+            class LoveWordParticle {
+                constructor() {
+                    this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                    this.x = Math.random() * canvasBg.width;
+                    this.y = canvasBg.height + (Math.random() * 100); // Aparecen desde abajo
+                    
+                    // Tamaño adaptado: los emojis/números son un poco más grandes, las frases más sutiles
+                    this.fontSize = this.text.includes('#') || this.text.length < 3 
+                        ? Math.random() * 12 + 16  // Entre 16px y 28px
+                        : Math.random() * 6 + 13;  // Entre 13px y 19px
+                    
+                    this.speedX = Math.random() * 0.4 - 0.2; // Ligero bamboleo lateral
+                    this.speedY = Math.random() * -0.6 - 0.2; // Velocidad de subida suave
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.4 + 0.3; // Opacidad translúcida para no molestar la lectura
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    // Si la palabra sale por la parte superior de la pantalla, se reinicia abajo
+                    if (this.y < -30) {
+                        this.y = canvasBg.height + 20;
+                        this.x = Math.random() * canvasBg.width;
+                        this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                        this.alpha = Math.random() * 0.4 + 0.3;
+                    }
+                }
+                
+                draw() {
+                    ctxBg.save();
+                    ctxBg.globalAlpha = this.alpha;
+                    ctxBg.fillStyle = this.color;
+                    // Mezclamos Montserrat con un estilo bold para que se lea hermoso
+                    ctxBg.font = `600 ${this.fontSize}px 'Montserrat', sans-serif`;
+                    ctxBg.textAlign = 'center';
+                    ctxBg.fillText(this.text, this.x, this.y);
+                    ctxBg.restore();
+                }
+            }
+
+            // Creamos una cantidad equilibrada para que se vea elegante y fluida en móviles
+            function createParticles() {
+                const numberOfParticles = 20; 
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new LoveWordParticle());
+                    // Escalamos la posición inicial vertical para que no salgan todas al mismo tiempo al arrancar
+                    particlesArray[i].y = Math.random() * canvasBg.height;
+                }
+            }
+
+            function animate() {
+                ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+                particlesArray.forEach(p => { 
+                    p.update(); 
+                    p.draw(); 
+                });
+                requestAnimationFrame(animate);
+            }
+
+            createParticles();
+            animate();
+        }
+
+        initBgParticles();
+
+        initBgParticles();
+    </script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boleto para una Cita Mágica 🍿</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #FFF5F6 0%, #FCE4E6 100%);
+            --wine-main: #6B2D5C;
+            --rose-gold: #B76E79;
+            --champagne: #F7E7CE;
+            --white-card: rgba(255, 255, 255, 0.85);
+            --text-dark: #4A2834;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .magic-glow-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 30%, rgba(247, 231, 206, 0.35) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        header, .ticket-container, .back-btn-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .day-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--rose-gold);
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.1rem;
+            color: var(--wine-main);
+            line-height: 1.2;
+        }
+
+        /* --- DISEÑO DEL TICKET DE CINE DE LUJO --- */
+        .ticket-container {
+            width: 100%;
+            max-width: 380px;
+            background: var(--white-card);
+            border: 2px dashed var(--rose-gold);
+            border-radius: 24px;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 10px 30px rgba(107, 45, 92, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Cortes laterales clásicos de un boleto */
+        .ticket-container::before, .ticket-container::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 24px;
+            height: 24px;
+            background: #FCE4E6; /* Match con el fondo */
+            border-radius: 50%;
+            border: 2px dashed var(--rose-gold);
+        }
+        .ticket-container::before { left: -14px; transform: translateY(-50%); }
+        .ticket-container::after { right: -14px; transform: translateY(-50%); }
+
+        .ticket-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 4px 8px rgba(107, 45, 92, 0.15));
+        }
+
+        .ticket-header {
+            font-family: 'Cinzel', serif;
+            color: var(--wine-main);
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .ticket-divider {
+            width: 80%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--rose-gold), transparent);
+            margin: 1.2rem 0;
+        }
+
+        /* --- DETALLES DE LA CITA --- */
+        .info-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            padding: 0 10px;
+        }
+
+        .info-item label {
+            font-size: 0.75rem;
+            color: var(--rose-gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .info-item p {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .ticket-note {
+            font-size: 0.88rem;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+            opacity: 0.9;
+            padding: 0 5px;
+        }
+
+        /* --- BOTÓN DE CONFIRMACIÓN --- */
+        .confirm-btn {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            background: var(--wine-main);
+            color: var(--champagne);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(107, 45, 92, 0.2);
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 45, 92, 0.35);
+            background: #542248;
+        }
+
+        /* --- VENTANA EMERGENTE (MODAL EXCLUSIVO DE CONFIRMACIÓN) --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(74, 40, 52, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: white;
+            border: 1px solid var(--rose-gold);
+            border-radius: 28px;
+            padding: 2.2rem 2rem;
+            text-align: center;
+            max-width: 380px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(107, 45, 92, 0.3);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-title {
+            font-family: 'Cinzel', serif;
+            color: var(--wine-main);
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+
+        .modal-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .close-modal-btn {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            background: transparent;
+            color: var(--wine-main);
+            border: 1px solid var(--wine-main);
+            padding: 10px 22px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-modal-btn:hover {
+            background: rgba(107, 45, 92, 0.05);
+        }
+
+        .back-btn-container {
+            margin-top: 2.5rem;
+            text-align: center;
+        }
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--wine-main);
+            border: 1px solid var(--wine-main);
+            padding: 10px 22px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: var(--wine-main);
+            color: var(--champagne);
+            box-shadow: 0 4px 15px rgba(107, 45, 92, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+    <div class="magic-glow-overlay"></div>
+
+    <header>
+        <p class="day-title">SORPRESA 10</p>
+        <h1 class="main-title">Un Pase Especial</h1>
+    </header>
+
+    <main class="ticket-container">
+        <div class="ticket-icon">🍿🎬</div>
+        <h2 class="ticket-header">VALE POR UNA CITA</h2>
+        
+        <div class="ticket-divider"></div>
+
+        <!-- RECUADRO DE DATOS -->
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Película</label>
+                <p>Tú la eliges 🧸</p>
+            </div>
+            <div class="info-item">
+                <label>Lugar</label>
+                <p>Nuestra salita virtual</p>
+            </div>
+            <div class="info-item">
+                <label>Fecha</label>
+                <p>¡Cuando tú digas!</p>
+            </div>
+            <div class="info-item">
+                <label>Asientos</label>
+                <p>Juntitos (VIP)</p>
+            </div>
+        </div>
+
+        <p class="ticket-note">"La distancia no nos impedirá compartir unas palomitas, reírnos de la misma escena o tomarnos de la mano a través de la pantalla. Prepárate, porque esta noche de películas es solo para los dos." ✨</p>
+        
+        <button class="confirm-btn" onclick="openModal()">🎟️ Confirmar Asistencia</button>
+    </main>
+
+    <!-- VENTANA DE CONFIRMACIÓN INTERACTIVA -->
+    <div class="modal-overlay" id="ticketModal">
+        <div class="modal-box">
+            <div style="font-size: 2.5rem; margin-bottom: 8px;">💖</div>
+            <h3 class="modal-title">¡Cita Confirmada!</h3>
+            <p class="modal-text">Tu boleto ha sido canjeado con éxito en mi corazón. Avísame en cuanto veas esto para preparar la plataforma, las botanas y empezar a contar las horas para vernos. ¡Te amo!</p>
+            <button class="close-modal-btn" onclick="closeModal()">Cerrar Ventana</button>
+        </div>
+    </div>
+
+    <div class="back-btn-container">
+        <a href="../index.html" class="back-btn">Volver al Calendario 🗓️</a>
+    </div>
+
+    <script>
+        // --- 🛠️ CONTROL DEL MODAL INTERACTIVO ---
+        function openModal() {
+            document.getElementById('ticketModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('ticketModal').style.display = 'none';
+        }
+
+        // --- 🌟 MOTOR DE PALABRAS FLOTANTES PERSONALIZADAS CONSERVADO ---
+        function initBgParticles() {
+            const canvasBg = document.getElementById('bgCanvas');
+            const ctxBg = canvasBg.getContext('2d');
+            let particlesArray = [];
+            
+            function resizeCanvas() {
+                canvasBg.width = window.innerWidth;
+                canvasBg.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const loveWords = [
+                "Feliz Cumpleaños", 
+                "Mi reina", 
+                "Mi princesa", 
+                "Mi bebita", 
+                "Mi mundo", 
+                "Mi esposita", 
+                "#26", 
+                "❤️", 
+                "💕"
+            ];
+            
+            const colors = ['#B76E79', '#6B2D5C', '#FFD1DC', '#4A2834'];
+
+            class LoveWordParticle {
+                constructor() {
+                    this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                    this.x = Math.random() * canvasBg.width;
+                    this.y = canvasBg.height + (Math.random() * 100);
+                    
+                    this.fontSize = this.text.includes('#') || this.text.length < 3 
+                        ? Math.random() * 12 + 16  
+                        : Math.random() * 6 + 13;  
+                    
+                    this.speedX = Math.random() * 0.4 - 0.2; 
+                    this.speedY = Math.random() * -0.6 - 0.2; 
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.4 + 0.3; 
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    if (this.y < -30) {
+                        this.y = canvasBg.height + 20;
+                        this.x = Math.random() * canvasBg.width;
+                        this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                        this.alpha = Math.random() * 0.4 + 0.3;
+                    }
+                }
+                
+                draw() {
+                    ctxBg.save();
+                    ctxBg.globalAlpha = this.alpha;
+                    ctxBg.fillStyle = this.color;
+                    ctxBg.font = `600 ${this.fontSize}px 'Montserrat', sans-serif`;
+                    ctxBg.textAlign = 'center';
+                    ctxBg.fillText(this.text, this.x, this.y);
+                    ctxBg.restore();
+                }
+            }
+
+            function createParticles() {
+                const numberOfParticles = 20; 
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new LoveWordParticle());
+                    particlesArray[i].y = Math.random() * canvasBg.height;
+                }
+            }
+
+            function animate() {
+                ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+                particlesArray.forEach(p => { 
+                    p.update(); 
+                    p.draw(); 
+                });
+                requestAnimationFrame(animate);
+            }
+
+            createParticles();
+            animate();
+        }
+
+        initBgParticles();
+    </script>
+</body>
+</html>
