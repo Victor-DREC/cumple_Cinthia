@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Un Instante Eterno 📸</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #FFF5F6 0%, #FCE4E6 100%);
+            --wine-main: #6B2D5C;
+            --rose-gold: #B76E79;
+            --champagne: #F7E7CE;
+            --white-card: rgba(255, 255, 255, 0.85);
+            --text-dark: #4A2834;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            padding: 3rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* --- 🌟 MOTOR DE EFECTOS ESPECIALES DEL FONDO --- */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .magic-glow-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 30%, rgba(247, 231, 206, 0.35) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+            animation: pulseGlow 8s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        header, .main-container, .back-btn-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .day-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--rose-gold);
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.1rem;
+            color: var(--wine-main);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            margin-top: 0.6rem;
+            font-size: 0.95rem;
+            max-width: 420px;
+            line-height: 1.5;
+            opacity: 0.85;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* --- 🖼️ CONTENEDOR FLIP DE LA FOTO (Efecto 3D Giro) --- */
+        .photo-card-wrapper {
+            background: transparent;
+            width: 100%;
+            height: 480px;
+            perspective: 1000px; /* Habilita el entorno 3D */
+            cursor: pointer;
+        }
+
+        .photo-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(183, 110, 121, 0.15);
+            border-radius: 24px;
+        }
+
+        /* Clase añadida dinámicamente con JS al hacer clic */
+        .photo-card-wrapper.flipped .photo-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            border: 1px solid rgba(183, 110, 121, 0.25);
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- LADO FRONTAL (FOTO POLAROID STYLED) --- */
+        .card-front {
+            background: var(--white-card);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .image-frame {
+            width: 100%;
+            height: 82%;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #eaeaea;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .image-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .photo-card-wrapper:hover .image-frame img {
+            transform: scale(1.03);
+        }
+
+        .polaroid-caption {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--wine-main);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* --- LADO POSTERIOR (ANÉCDOTA / CARTA INTERNA) --- */
+        .card-back {
+            background: rgba(255, 255, 255, 0.95);
+            transform: rotateY(180deg);
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .story-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: left;
+            height: 100%;
+            justify-content: center;
+        }
+
+        .story-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--wine-main);
+            border-bottom: 1px dashed var(--rose-gold);
+            padding-bottom: 8px;
+            text-align: center;
+        }
+
+        .story-text {
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+            text-align: justify;
+            overflow-y: auto; /* Por si la anécdota es larga */
+            padding-right: 5px;
+        }
+
+        /* Estilo sutil para scrollbar interno si es necesario */
+        .story-text::-webkit-scrollbar {
+            width: 4px;
+        }
+        .story-text::-webkit-scrollbar-thumb {
+            background: var(--rose-gold);
+            border-radius: 4px;
+        }
+
+        .story-footer {
+            font-size: 0.85rem;
+            color: var(--rose-gold);
+            font-weight: 600;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        /* --- TIP INDICA CLIC --- */
+        .hint-text {
+            font-size: 0.8rem;
+            color: var(--rose-gold);
+            opacity: 0.8;
+            animation: pulseHint 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseHint {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+
+        .back-btn-container {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--wine-main);
+            border: 1px solid var(--wine-main);
+            padding: 10px 22px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: var(--wine-main);
+            color: var(--champagne);
+            box-shadow: 0 4px 15px rgba(107, 45, 92, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas para mantener el fondo dinámico de estrellas/partículas -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Capa de brillo mágico de ambiente -->
+    <div class="magic-glow-overlay"></div>
+
+    <header>
+        <p class="day-title">SORPRESA 3</p>
+        <h1 class="main-title">Un Instante Eterno</h1>
+        <p class="subtitle">La distancia física no impide que te lleve conmigo en cada momento. Esta fotografía tiene guardada una historia hermosa.</p>
+    </header>
+
+    <main class="main-container">
+        
+        <!-- TARJETA INTERACTIVA CON GIRO -->
+        <div class="photo-card-wrapper" id="photoCard" onclick="flipCard()">
+            <div class="photo-card-inner">
+                
+                <!-- PARTE FRONTAL: LA FOTO DE ELLA -->
+                <div class="card-front">
+                    <div class="image-frame">
+                        <!-- Tip: Reemplaza 'imagenes/ella.jpg' por la ruta o enlace directo de la foto que elegiste -->
+                        <img src="../img/regalo3.jpeg" alt="Tu mirada hermosa">
+                    </div>
+                    <div class="polaroid-caption">Nuestro Destino ✨</div>
+                </div>
+
+                <!-- PARTE TRASERA: TU ANÉCDOTA -->
+                <div class="card-back">
+                    <div class="story-container">
+                        <h2 class="story-title">Nuestra Historia</h2>
+                        <p class="story-text">
+                            “Bajo la inmensidad del cielo nocturno, dos manos se buscan en silencio, atravesando la distancia que las separa. La luna, testigo eterna, guarda en su luz el secreto de un amor marcado por iniciales y un corazón. En este instante suspendido entre estrellas y nubes, la conexión se vuelve infinita, como si el universo entero conspirara para unirlos.”
+                        </p>
+                        <div class="story-footer">Siempre estás conmigo ❤️</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <p class="hint-text">✨ Toca la fotografía para descubrir su secreto</p>
+
+    </main>
+
+    <div class="back-btn-container">
+        <a href="../index.html"  class="back-btn">Volver al Calendario 🗓️</a>
+    </div>
+
+    <script>
+        // --- 🔄 LÓGICA DE GIRO DE TARJETA ---
+        function flipCard() {
+            const card = document.getElementById('photoCard');
+            card.classList.toggle('flipped');
+        }
+
+        // --- 🌟 MOTOR DE EFECTOS ESPECIALES DINÁMICOS MANTENIDO ---
+        function initBgParticles() {
+            const canvas = document.getElementById('bgCanvas');
+            const ctx = canvas.getContext('2d');
+            let particlesArray = [];
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const colors = ['#B76E79', '#D4AF37', '#6B2D5C', '#FFD1DC', '#FFFFFF'];
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2.5 + 1;
+                    this.speedX = Math.random() * 0.4 - 0.2;
+                    this.speedY = Math.random() * -0.4 - 0.1;
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.5 + 0.2;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    if (this.y < 0 || this.alpha <= 0) {
+                        this.y = canvas.height;
+                        this.x = Math.random() * canvas.width;
+                        this.alpha = Math.random() * 0.5 + 0.2;
+                    }
+                }
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.alpha;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+
+            function createParticles() {
+                const numberOfParticles = 35;
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new Particle());
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particlesArray.length; i++) {
+                    particlesArray[i].update();
+                    particlesArray[i].draw();
+                }
+                requestAnimationFrame(animate);
+            }
+
+            createParticles();
+            animate();
+        }
+
+        // --- 🌟 NUEVO MOTOR DE PALABRAS FLOTANTES PERSONALIZADAS ---
+        function initBgParticles() {
+            const canvasBg = document.getElementById('bgCanvas');
+            const ctxBg = canvasBg.getContext('2d');
+            let particlesArray = [];
+            
+            function resizeCanvas() {
+                canvasBg.width = window.innerWidth;
+                canvasBg.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            // Lista de palabras y detalles personalizados que flotarán en el fondo
+            const loveWords = [
+                "Feliz Cumpleaños", 
+                "Mi reina", 
+                "Mi princesa", 
+                "Mi bebita", 
+                "Mi mundo", 
+                "Mi esposita", 
+                "#26", 
+                "❤️", 
+                "💕"
+            ];
+            
+            const colors = ['#B76E79', '#6B2D5C', '#FFD1DC', '#4A2834'];
+
+            class LoveWordParticle {
+                constructor() {
+                    this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                    this.x = Math.random() * canvasBg.width;
+                    this.y = canvasBg.height + (Math.random() * 100); // Aparecen desde abajo
+                    
+                    // Tamaño adaptado: los emojis/números son un poco más grandes, las frases más sutiles
+                    this.fontSize = this.text.includes('#') || this.text.length < 3 
+                        ? Math.random() * 12 + 16  // Entre 16px y 28px
+                        : Math.random() * 6 + 13;  // Entre 13px y 19px
+                    
+                    this.speedX = Math.random() * 0.4 - 0.2; // Ligero bamboleo lateral
+                    this.speedY = Math.random() * -0.6 - 0.2; // Velocidad de subida suave
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.4 + 0.3; // Opacidad translúcida para no molestar la lectura
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    // Si la palabra sale por la parte superior de la pantalla, se reinicia abajo
+                    if (this.y < -30) {
+                        this.y = canvasBg.height + 20;
+                        this.x = Math.random() * canvasBg.width;
+                        this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                        this.alpha = Math.random() * 0.4 + 0.3;
+                    }
+                }
+                
+                draw() {
+                    ctxBg.save();
+                    ctxBg.globalAlpha = this.alpha;
+                    ctxBg.fillStyle = this.color;
+                    // Mezclamos Montserrat con un estilo bold para que se lea hermoso
+                    ctxBg.font = `600 ${this.fontSize}px 'Montserrat', sans-serif`;
+                    ctxBg.textAlign = 'center';
+                    ctxBg.fillText(this.text, this.x, this.y);
+                    ctxBg.restore();
+                }
+            }
+
+            // Creamos una cantidad equilibrada para que se vea elegante y fluida en móviles
+            function createParticles() {
+                const numberOfParticles = 20; 
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new LoveWordParticle());
+                    // Escalamos la posición inicial vertical para que no salgan todas al mismo tiempo al arrancar
+                    particlesArray[i].y = Math.random() * canvasBg.height;
+                }
+            }
+
+            function animate() {
+                ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+                particlesArray.forEach(p => { 
+                    p.update(); 
+                    p.draw(); 
+                });
+                requestAnimationFrame(animate);
+            }
+
+            createParticles();
+            animate();
+        }
+
+        initBgParticles();
+
+        initBgParticles();
+    </script>
+</body>
+</html>

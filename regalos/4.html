@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Un Capítulo Para Nosotros 📚</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Montserrat:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #FFF5F6 0%, #FCE4E6 100%);
+            --wine-main: #6B2D5C;
+            --rose-gold: #B76E79;
+            --champagne: #F7E7CE;
+            --white-card: rgba(255, 255, 255, 0.85);
+            --text-dark: #4A2834;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            padding: 2.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .magic-glow-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 30%, rgba(247, 231, 206, 0.35) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        header, .book-presentation, .back-btn-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .day-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--rose-gold);
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            color: var(--wine-main);
+            line-height: 1.2;
+        }
+
+        /* --- CONTENEDOR PRINCIPAL DEL LIBRO Y LA CARTA --- */
+        .book-presentation {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* --- ESTILO DE LA PORTADA DEL LIBRO --- */
+        .book-cover-wrapper {
+            background: var(--white-card);
+            padding: 12px;
+            border-radius: 8px 18px 18px 8px; /* Simula el lomo y el borde de un libro */
+            box-shadow: 
+                -5px 0 15px rgba(0,0,0,0.05), /* Sombra del lomo */
+                10px 15px 30px rgba(107, 45, 92, 0.15); /* Sombra principal */
+            border-left: 12px solid var(--wine-main); /* Lomo del libro */
+            border-top: 1px solid rgba(183, 110, 121, 0.2);
+            border-right: 1px solid rgba(183, 110, 121, 0.2);
+            border-bottom: 1px solid rgba(183, 110, 121, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: transform 0.4s ease;
+        }
+
+        .book-cover-wrapper:hover {
+            transform: translateY(-5px) rotateY(-5deg);
+        }
+
+        .book-canvas {
+            display: block;
+            width: 180px;
+            height: 270px; /* Proporción clásica de libro (2:3) */
+            background: #f0e6e8;
+            border-radius: 2px 8px 8px 2px;
+            box-shadow: inset 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        /* --- ESTILO DE LA CARTA DE DEDICATORIA --- */
+        .dedication-card {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--rose-gold);
+            border-radius: 4px;
+            padding: 2rem 1.8rem;
+            width: 100%;
+            box-shadow: 0 8px 25px rgba(107, 45, 92, 0.08);
+            position: relative;
+        }
+
+        /* Efecto de cinta/marcapáginas */
+        .dedication-card::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 15px;
+            background: var(--wine-main);
+            border-radius: 2px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .dedication-greeting {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--wine-main);
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .dedication-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-dark);
+            font-style: italic;
+            text-align: justify;
+        }
+
+        .dedication-signature {
+            margin-top: 1.5rem;
+            text-align: right;
+            font-family: 'Cinzel', serif;
+            color: var(--rose-gold);
+            font-weight: 700;
+        }
+
+        .back-btn-container {
+            margin-top: 2.5rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--wine-main);
+            border: 1px solid var(--wine-main);
+            padding: 10px 22px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: var(--wine-main);
+            color: var(--champagne);
+            box-shadow: 0 4px 15px rgba(107, 45, 92, 0.2);
+        }
+
+        .dedication {
+            margin-top: 0.8rem;
+            font-size: 0.95rem;
+            font-style: italic;
+            color: var(--wine-main);
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+    <div class="magic-glow-overlay"></div>
+
+    <header>
+        <p class="day-title">SORPRESA DEL DÍA 4</p>
+        <h1 class="main-title">Entre Páginas y Tú</h1>
+    </header>
+
+    <main class="book-presentation">
+        <p class="dedication">Dale click a la portada❤️</p>
+        <a href="https://booknet.com/es/book/un-matrimonio-a-distancia-b432862" target="_blank" class="book-link-wrapper" title="Haz clic para ver el libro">
+            <div class="book-cover-wrapper">
+                <!-- El canvas cargará la imagen 'libro.jpeg' -->
+                <canvas id="bookCanvas" class="book-canvas" width="180" height="270"></canvas>
+            </div>
+        </a>
+
+        <article class="dedication-card">
+            <h2 class="dedication-greeting">Para mi protagonista favorita,</h2>
+            <p class="dedication-text">
+                "Meghan observa la pantalla de su celular, esperando un mensaje que no llega. El silencio se convierte en un peso que recorre la habitación. Uzeil, desde otro país, piensa en cómo la rutina diaria lo arrastra y le roba las palabras que antes fluían con facilidad. Ambos saben que el amor sigue ahí, pero la distancia lo pone a prueba cada día." <br><br>
+                Te lo recomiendo porque habla sobre que la distancia no solo mide kilómetros, mide las horas que se estiran como eternidades, los silencios que se vuelven muros invisibles, y las promesas que deben sostenerse con la fuerza de un corazón que se niega a rendirse.
+            </p>
+            <div class="dedication-signature">Con todo mi amor,<br>Tu Novio ❤️</div>
+        </article>
+
+    </main>
+
+    <div class="back-btn-container">
+        <a href="../index.html" class="back-btn">Volver a la Ruta 🗓️</a>
+    </div>
+
+    <script>
+        // --- 🛠️ CARGA DE LA PORTADA DEL LIBRO EN EL CANVAS ---
+        // Guarda la foto de la portada en tu carpeta 'img/' con el nombre 'libro.jpeg'
+        const rutaLibro = '../img/libro.png'; 
+
+        function cargarPortadaLibro() {
+            const canvas = document.getElementById('bookCanvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.src = rutaLibro ;
+            
+            img.onload = function() {
+                // Limpiar el canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Lógica de escalado para que la portada cubra el canvas (Object-fit Cover)
+                const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+                const x = (canvas.width / 2) - (img.width / 2) * scale;
+                const y = (canvas.height / 2) - (img.height / 2) * scale;
+                
+                ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+            };
+
+            // Texto de respaldo por si la imagen tarda en cargar o no existe
+            img.onerror = function() {
+                ctx.fillStyle = '#4A2834';
+                ctx.font = '14px Montserrat';
+                ctx.textAlign = 'center';
+                ctx.fillText('Cargando Portada...', canvas.width / 2, canvas.height / 2);
+            };
+        }
+
+        // Ejecutar carga de imagen
+        cargarPortadaLibro();
+
+
+        // --- 🌟 MOTOR DE PALABRAS FLOTANTES PERSONALIZADAS CONSERVADO ---
+        function initBgParticles() {
+            const canvasBg = document.getElementById('bgCanvas');
+            const ctxBg = canvasBg.getContext('2d');
+            let particlesArray = [];
+            
+            function resizeCanvas() {
+                canvasBg.width = window.innerWidth;
+                canvasBg.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const loveWords = [
+                "Feliz Cumpleaños", 
+                "Mi reina", 
+                "Mi princesa", 
+                "Mi bebita", 
+                "Mi mundo", 
+                "Mi esposita", 
+                "#26", 
+                "❤️", 
+                "💕"
+            ];
+            
+            const colors = ['#B76E79', '#6B2D5C', '#FFD1DC', '#4A2834'];
+
+            class LoveWordParticle {
+                constructor() {
+                    this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                    this.x = Math.random() * canvasBg.width;
+                    this.y = canvasBg.height + (Math.random() * 100);
+                    
+                    this.fontSize = this.text.includes('#') || this.text.length < 3 
+                        ? Math.random() * 12 + 16  
+                        : Math.random() * 6 + 13;  
+                    
+                    this.speedX = Math.random() * 0.4 - 0.2; 
+                    this.speedY = Math.random() * -0.6 - 0.2; 
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.4 + 0.3; 
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    if (this.y < -30) {
+                        this.y = canvasBg.height + 20;
+                        this.x = Math.random() * canvasBg.width;
+                        this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                        this.alpha = Math.random() * 0.4 + 0.3;
+                    }
+                }
+                
+                draw() {
+                    ctxBg.save();
+                    ctxBg.globalAlpha = this.alpha;
+                    ctxBg.fillStyle = this.color;
+                    ctxBg.font = `600 ${this.fontSize}px 'Montserrat', sans-serif`;
+                    ctxBg.textAlign = 'center';
+                    ctxBg.fillText(this.text, this.x, this.y);
+                    ctxBg.restore();
+                }
+            }
+
+            function createParticles() {
+                const numberOfParticles = 20; 
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new LoveWordParticle());
+                    particlesArray[i].y = Math.random() * canvasBg.height;
+                }
+            }
+
+            function animate() {
+                ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+                particlesArray.forEach(p => { 
+                    p.update(); 
+                    p.draw(); 
+                });
+                requestAnimationFrame(animate);
+            }
+
+            createParticles();
+            animate();
+        }
+
+        initBgParticles();
+    </script>
+</body>
+</html>

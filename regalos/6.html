@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uniendo Nuestras Piezas 🧩</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #FFF5F6 0%, #FCE4E6 100%);
+            --wine-main: #6B2D5C;
+            --rose-gold: #B76E79;
+            --champagne: #F7E7CE;
+            --white-card: rgba(255, 255, 255, 0.82);
+            --text-dark: #4A2834;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .magic-glow-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 30%, rgba(247, 231, 206, 0.35) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        header, .game-container, .back-btn-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .day-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--rose-gold);
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.1rem;
+            color: var(--wine-main);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            margin-top: 0.6rem;
+            font-size: 0.95rem;
+            max-width: 420px;
+            line-height: 1.5;
+            opacity: 0.85;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 360px; 
+            background: var(--white-card);
+            border: 1px solid rgba(183, 110, 121, 0.3);
+            border-radius: 24px;
+            padding: 1.2rem;
+            box-shadow: 0 10px 30px rgba(107, 45, 92, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #puzzleCanvas {
+            background: #F5EAEB;
+            border-radius: 14px;
+            box-shadow: 0 6px 20px rgba(107, 45, 92, 0.1);
+            max-width: 100%;
+            cursor: grab;
+        }
+        
+        #puzzleCanvas:active {
+            cursor: grabbing;
+        }
+
+        /* --- VENTANA FLOTANTE DE VICTORIA PREMIUM --- */
+        .win-card-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(74, 40, 52, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .win-message-box {
+            background: white;
+            border: 1px solid var(--rose-gold);
+            border-radius: 28px;
+            padding: 2.2rem 2rem;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(107, 45, 92, 0.3);
+            animation: LovePopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes LovePopIn {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .win-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            animation: heartbeat 1.2s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.12); }
+        }
+
+        .win-title {
+            font-family: 'Cinzel', serif;
+            color: var(--wine-main);
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .win-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+            margin-bottom: 24px;
+        }
+
+        /* --- CONTENEDOR DE NUEVOS BOTONES DE ACCIÓN EN EL PA PANEL --- */
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        /* Botón Primario: Volver a Jugar */
+        .restart-btn {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: var(--wine-main);
+            color: var(--champagne);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(107, 45, 92, 0.2);
+            transition: all 0.3s;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 45, 92, 0.35);
+            background: #542248;
+        }
+
+        /* Botón Secundario: Regresar al Rompecabezas Completo */
+        .view-puzzle-btn {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: transparent;
+            color: var(--wine-main);
+            border: 1px solid var(--wine-main);
+            padding: 11px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .view-puzzle-btn:hover {
+            background: rgba(107, 45, 92, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .hint-text {
+            font-size: 0.82rem;
+            color: var(--rose-gold);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .back-btn-container {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--wine-main);
+            border: 1px solid var(--wine-main);
+            padding: 10px 22px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: var(--wine-main);
+            color: var(--champagne);
+            box-shadow: 0 4px 15px rgba(107, 45, 92, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+    <div class="magic-glow-overlay"></div>
+
+    <header>
+        <p class="day-title">SORPRESA 6</p>
+        <h1 class="main-title">Encajando Destinos</h1>
+        <p class="subtitle">A veces la distancia nos desarma un poquito, pero tú y yo siempre encontramos la forma perfecta de volver a encajar. 🧩</p>
+    </header>
+
+    <main class="game-container">
+        <canvas id="puzzleCanvas" width="320" height="440"></canvas>
+        <p class="hint-text" id="gameHint">✨ Mantén presionado y arrastra las piezas a su cuadrícula correcta</p>
+    </main>
+
+    <div class="win-card-overlay" id="loveModal">
+        <div class="win-message-box">
+            <div class="win-icon">❤️</div>
+            <h3 class="win-title">¡Lo lograste, mi reina!</h3>
+            <p class="win-text">"Cada pieza en su lugar, justo como tú y yo en esta hermosa historia. No importa los kilómetros, ver nuestra imagen completa me recuerda que la distancia separa cuerpos, pero jamás dos almas que están destinadas a diseñarse juntas. Eres mi rompecabezas favorito." 🥰</p>
+            
+            <div class="modal-actions">
+                <button class="restart-btn" onclick="triggerRestartGame()">🔄 Volver a Repetir</button>
+                <button class="view-puzzle-btn" onclick="closeModal()">🖼️ Mirar nuestra foto</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-btn-container">
+        <a href="../index.html" class="back-btn">Volver al Calendario 🗓️</a>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('puzzleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const PUZZLE_DIFFICULTY = 3; 
+        const PIECE_WIDTH = canvas.width / PUZZLE_DIFFICULTY;
+        const PIECE_HEIGHT = canvas.height / PUZZLE_DIFFICULTY;
+
+        let pieces = [];
+        let selectedPiece = null;
+        let clickOffset = { x: 0, y: 0 };
+        let isGameFinished = false;
+
+        const img = new Image();
+        img.src = '../img/rompeCabezas.jpeg'; 
+        img.onload = onImageInit;
+
+        function onImageInit() {
+            buildPieces();
+            shufflePieces();
+            updateCanvas();
+            initPuzzleListeners();
+        }
+
+        function buildPieces() {
+            pieces = [];
+            for (let i = 0; i < PUZZLE_DIFFICULTY; i++) {
+                for (let j = 0; j < PUZZLE_DIFFICULTY; j++) {
+                    let piece = {
+                        sx: j * (img.width / PUZZLE_DIFFICULTY), 
+                        sy: i * (img.height / PUZZLE_DIFFICULTY),
+                        sw: img.width / PUZZLE_DIFFICULTY,
+                        sh: img.height / PUZZLE_DIFFICULTY,
+                        x: j * PIECE_WIDTH,  
+                        y: i * PIECE_HEIGHT,
+                        correctX: j * PIECE_WIDTH, 
+                        correctY: i * PIECE_HEIGHT
+                    };
+                    pieces.push(piece);
+                }
+            }
+        }
+
+        function shufflePieces() {
+            pieces.forEach(p => {
+                p.x = Math.random() * (canvas.width - PIECE_WIDTH);
+                p.y = Math.random() * (canvas.height - PIECE_HEIGHT);
+            });
+        }
+
+        function updateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (!isGameFinished) {
+                drawGridGuide();
+            }
+
+            pieces.forEach(p => {
+                if (p !== selectedPiece) drawPiece(p);
+            });
+
+            if (selectedPiece) drawPiece(selectedPiece);
+        }
+
+        function drawGridGuide() {
+            ctx.save();
+            ctx.strokeStyle = "rgba(183, 110, 121, 0.25)";
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]); 
+            
+            for (let i = 1; i < PUZZLE_DIFFICULTY; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * PIECE_WIDTH, 0);
+                ctx.lineTo(i * PIECE_WIDTH, canvas.height);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(0, i * PIECE_HEIGHT);
+                ctx.lineTo(canvas.width, i * PIECE_HEIGHT);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function drawPiece(p) {
+            ctx.save();
+            ctx.drawImage(img, p.sx, p.sy, p.sw, p.sh, p.x, p.y, PIECE_WIDTH, PIECE_HEIGHT);
+            
+            if (!isGameFinished) {
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(p.x, p.y, PIECE_WIDTH, PIECE_HEIGHT);
+            }
+            ctx.restore();
+        }
+
+        function initPuzzleListeners() {
+            canvas.addEventListener('mousedown', onPointerDown);
+            window.addEventListener('mousemove', onPointerMove);
+            window.addEventListener('mouseup', onPointerUp);
+
+            canvas.addEventListener('touchstart', onPointerDown, { passive: false });
+            window.addEventListener('touchmove', onPointerMove, { passive: false });
+            window.addEventListener('touchend', onPointerUp);
+        }
+
+        function getCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function onPointerDown(e) {
+            if (isGameFinished) return;
+            const coords = getCoordinates(e);
+            
+            for (let i = pieces.length - 1; i >= 0; i--) {
+                let p = pieces[i];
+                if (coords.x >= p.x && coords.x <= p.x + PIECE_WIDTH &&
+                    coords.y >= p.y && coords.y <= p.y + PIECE_HEIGHT) {
+                    selectedPiece = p;
+                    clickOffset.x = coords.x - p.x;
+                    clickOffset.y = coords.y - p.y;
+                    break;
+                }
+            }
+        }
+
+        function onPointerMove(e) {
+            if (!selectedPiece || isGameFinished) return;
+            if (e.cancelable) e.preventDefault();
+
+            const coords = getCoordinates(e);
+            selectedPiece.x = coords.x - clickOffset.x;
+            selectedPiece.y = coords.y - clickOffset.y;
+            updateCanvas();
+        }
+
+        function onPointerUp() {
+            if (!selectedPiece || isGameFinished) return;
+
+            const snapTolerance = 25; 
+            if (Math.abs(selectedPiece.x - selectedPiece.correctX) < snapTolerance &&
+                Math.abs(selectedPiece.y - selectedPiece.correctY) < snapTolerance) {
+                selectedPiece.x = selectedPiece.correctX;
+                selectedPiece.y = selectedPiece.correctY;
+            }
+
+            selectedPiece = null;
+            updateCanvas();
+            checkVictory();
+        }
+
+        function checkVictory() {
+            const win = pieces.every(p => p.x === p.correctX && p.y === p.correctY);
+            if (win) {
+                isGameFinished = true;
+                document.getElementById('gameHint').style.display = 'none';
+                updateCanvas(); 
+                
+                setTimeout(() => {
+                    document.getElementById('loveModal').style.display = 'flex';
+                }, 400);
+            }
+        }
+
+        /* --- 🛠️ NUEVAS FUNCIONES DE CONTROL DEL MODAL Y REINICIO --- */
+        function closeModal() {
+            document.getElementById('loveModal').style.display = 'none';
+        }
+
+        function triggerRestartGame() {
+            closeModal();
+            isGameFinished = false;
+            document.getElementById('gameHint').style.display = 'block';
+            shufflePieces();
+            updateCanvas();
+        }
+
+        function initBgParticles() {
+            const canvasBg = document.getElementById('bgCanvas');
+            const ctxBg = canvasBg.getContext('2d');
+            let particlesArray = [];
+            
+            function resizeCanvas() {
+                canvasBg.width = window.innerWidth;
+                canvasBg.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const colors = ['#B76E79', '#D4AF37', '#6B2D5C', '#FFD1DC', '#FFFFFF'];
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvasBg.width;
+                    this.y = Math.random() * canvasBg.height;
+                    this.size = Math.random() * 2.5 + 1;
+                    this.speedX = Math.random() * 0.4 - 0.2;
+                    this.speedY = Math.random() * -0.4 - 0.1;
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.5 + 0.2;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.y < 0) {
+                        this.y = canvasBg.height;
+                        this.x = Math.random() * canvasBg.width;
+                    }
+                }
+                draw() {
+                    ctxBg.save();
+                    ctxBg.globalAlpha = this.alpha;
+                    ctxBg.beginPath();
+                    ctxBg.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctxBg.fillStyle = this.color;
+                    ctxBg.fill();
+                    ctxBg.restore();
+                }
+            }
+
+            for (let i = 0; i < 30; i++) particlesArray.push(new Particle());
+
+            function animate() {
+                ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+                particlesArray.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // --- 🌟 NUEVO MOTOR DE PALABRAS FLOTANTES PERSONALIZADAS ---
+        function initBgParticles() {
+            const canvasBg = document.getElementById('bgCanvas');
+            const ctxBg = canvasBg.getContext('2d');
+            let particlesArray = [];
+            
+            function resizeCanvas() {
+                canvasBg.width = window.innerWidth;
+                canvasBg.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            // Lista de palabras y detalles personalizados que flotarán en el fondo
+            const loveWords = [
+                "Feliz Cumpleaños", 
+                "Mi reina", 
+                "Mi princesa", 
+                "Mi bebita", 
+                "Mi mundo", 
+                "Mi esposita", 
+                "#26", 
+                "❤️", 
+                "💕"
+            ];
+            
+            const colors = ['#B76E79', '#6B2D5C', '#FFD1DC', '#4A2834'];
+
+            class LoveWordParticle {
+                constructor() {
+                    this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                    this.x = Math.random() * canvasBg.width;
+                    this.y = canvasBg.height + (Math.random() * 100); // Aparecen desde abajo
+                    
+                    // Tamaño adaptado: los emojis/números son un poco más grandes, las frases más sutiles
+                    this.fontSize = this.text.includes('#') || this.text.length < 3 
+                        ? Math.random() * 12 + 16  // Entre 16px y 28px
+                        : Math.random() * 6 + 13;  // Entre 13px y 19px
+                    
+                    this.speedX = Math.random() * 0.4 - 0.2; // Ligero bamboleo lateral
+                    this.speedY = Math.random() * -0.6 - 0.2; // Velocidad de subida suave
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.4 + 0.3; // Opacidad translúcida para no molestar la lectura
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    // Si la palabra sale por la parte superior de la pantalla, se reinicia abajo
+                    if (this.y < -30) {
+                        this.y = canvasBg.height + 20;
+                        this.x = Math.random() * canvasBg.width;
+                        this.text = loveWords[Math.floor(Math.random() * loveWords.length)];
+                        this.alpha = Math.random() * 0.4 + 0.3;
+                    }
+                }
+                
+                draw() {
+                    ctxBg.save();
+                    ctxBg.globalAlpha = this.alpha;
+                    ctxBg.fillStyle = this.color;
+                    // Mezclamos Montserrat con un estilo bold para que se lea hermoso
+                    ctxBg.font = `600 ${this.fontSize}px 'Montserrat', sans-serif`;
+                    ctxBg.textAlign = 'center';
+                    ctxBg.fillText(this.text, this.x, this.y);
+                    ctxBg.restore();
+                }
+            }
+
+            // Creamos una cantidad equilibrada para que se vea elegante y fluida en móviles
+            function createParticles() {
+                const numberOfParticles = 20; 
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new LoveWordParticle());
+                    // Escalamos la posición inicial vertical para que no salgan todas al mismo tiempo al arrancar
+                    particlesArray[i].y = Math.random() * canvasBg.height;
+                }
+            }
+
+            function animate() {
+                ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+                particlesArray.forEach(p => { 
+                    p.update(); 
+                    p.draw(); 
+                });
+                requestAnimationFrame(animate);
+            }
+
+            createParticles();
+            animate();
+        }
+
+        initBgParticles();
+
+        initBgParticles();
+    </script>
+</body>
+</html>

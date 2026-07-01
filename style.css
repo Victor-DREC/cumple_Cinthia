@@ -101,12 +101,7 @@ body {
     padding: 10px;
 }
 
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    align-items: center;
-}
+
 
 /* Estilo Tarjeta Premium Tradicional (Días 1 al 26) */
 .day-card {
@@ -150,18 +145,7 @@ body {
 }
 
 /* --- 🎂 DISEÑO MAGNO ESPECIAL CUMPLEAÑOS (DÍA 27) --- */
-.day-card.grand-finale {
-    grid-column: span 4;
-    aspect-ratio: auto;
-    height: 90px;
-    background: linear-gradient(135deg, var(--wine-main) 0%, #4A1539 100%);
-    color: var(--champagne);
-    font-size: 2.2rem;
-    border-radius: 50px;
-    border: 3px solid var(--gold-glow);
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-    animation: gentlePulse 2.5s infinite ease-in-out;
-}
+
 
 .day-card.grand-finale::before {
     content: "✨ ¡EL GRAN DÍA! 🎂 ";
@@ -245,3 +229,75 @@ input[type="text"]:focus { outline: none; border-color: var(--wine-main); }
 
 .hidden { display: none !important; }
 .error-msg { color: #D32F2F; font-size: 0.8rem; display: none; margin-top: 8px; font-weight: 600; }
+
+.day-card.grand-finale {
+    grid-column: span 4; /* Esto hace que el regalo 26 ocupe todo el ancho inferior */
+    aspect-ratio: auto;
+    height: 90px;
+    /* Conserva tus hermosos estilos de gradiente y animación */
+}
+
+/* --- CONTENEDOR FLUIDO --- */
+.calendar-container {
+    width: 100%;
+    max-width: 580px; /* Incrementamos un poco el ancho máximo para que respiren las 5 columnas */
+    padding: 10px;
+    margin: 0 auto;
+}
+
+/* --- CUADRÍCULA UNIFORME DE 5 COLUMNAS --- */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Forzamos exactamente 5 columnas iguales */
+    gap: 12px; /* Un espacio ligeramente más compacto para pantallas móviles */
+    align-items: center;
+}
+
+/* --- TARJETAS DE REGALO (1 al 25) --- */
+.day-card {
+    aspect-ratio: 1; /* Cuadrados perfectos uniformes */
+    background: var(--white-card);
+    color: var(--wine-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem; /* Reducido levemente para que encaje estético en móvil */
+    font-weight: bold;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(183, 110, 121, 0.15);
+    border: 1px solid rgba(183, 110, 121, 0.25);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    cursor: not-allowed;
+    opacity: 0.4;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+/* --- 🎂 EL GRAN FINAL: REGALO 26 CENTRADO EN LA BASE --- */
+.day-card.grand-finale {
+    grid-column: span 5; /* Ocupa las 5 columnas completas de la base, centrando la estética */
+    aspect-ratio: auto;
+    height: 85px;
+    background: linear-gradient(135deg, var(--wine-main) 0%, #4A1539 100%);
+    color: var(--champagne);
+    font-size: 2rem;
+    border-radius: 50px;
+    border: 3px solid var(--gold-glow);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    animation: gentlePulse 2.5s infinite ease-in-out;
+}
+
+/* Ajuste responsive para pantallas muy pequeñas */
+@media (max-width: 400px) {
+    .calendar-grid {
+        gap: 8px; /* Reduce la separación en teléfonos delgados para evitar desbordes */
+    }
+    .day-card {
+        font-size: 1.1rem;
+    }
+    .day-card.grand-finale::before {
+        font-size: 0.9rem; /* El prefijo del texto se encoge en pantallas compactas */
+    }
+}
